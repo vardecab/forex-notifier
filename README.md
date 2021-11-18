@@ -20,6 +20,7 @@ Lorem ipsum -->
 
 ## Release History
 
+- 0.3: v1 of notifications added.
 - 0.2: Improved code so only the currency pair rate is shown without JSON stuff.
 - 0.1: Initial release.
 
