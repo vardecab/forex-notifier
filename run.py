@@ -14,20 +14,28 @@ print("Starting the script...")
 
 # --------- let the fun begin -------- #
 
-# read API key
-API_key = open("API_key.txt", "r").read()
+# build URL
+API_url = 'https://free.currconv.com/api/v7/convert' # API URL 
+API_key = open("API_key.txt", "r").read() # read API key from file
+compact = '&compact=y' # compact response from API
 
 # USD <> PLN
-get_data = requests.get(url='https://free.currconv.com/api/v7/convert?apiKey=' + API_key + '&q=USD_PLN&compact=y')
-print(get_data.json())
+currency_pair = 'USD_PLN' # currency pair
+get_data = requests.get(url=API_url + API_key + '&q=' + currency_pair + compact).json()
+rate = round(get_data[currency_pair]['val'],2) # currency pair rate rounded to 2 decimals
+print(rate)
 
 # EUR <> PLN
-get_data = requests.get(url='https://free.currconv.com/api/v7/convert?apiKey=' + API_key + '&q=EUR_PLN&compact=y')
-print(get_data.json())
+currency_pair = 'EUR_PLN' # currency pair
+get_data = requests.get(url=API_url + API_key + '&q=' + currency_pair + compact).json()
+rate = round(get_data[currency_pair]['val'],2) # currency pair rate rounded to 2 decimals
+print(rate)
 
 # GBP <> PLN
-get_data = requests.get(url='https://free.currconv.com/api/v7/convert?apiKey=' + API_key + '&q=GBP_PLN&compact=y')
-print(get_data.json())
+currency_pair = 'GBP_PLN' # currency pair
+get_data = requests.get(url=API_url + API_key + '&q=' + currency_pair + compact).json()
+rate = round(get_data[currency_pair]['val'],2) # currency pair rate rounded to 2 decimals
+print(rate)
 
 # ------------- run time ------------- #
 
