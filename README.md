@@ -20,6 +20,7 @@ Lorem ipsum -->
 
 ## Release History
 
+- 0.4.1: Tiny bug fix related to variable.
 - 0.4: Added comparison with previous values from the last script run.
 - 0.3: v1 of notifications added.
 - 0.2: Improved code so only the currency pair rate is shown without JSON stuff.

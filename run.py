@@ -44,7 +44,7 @@ rate_usd = round(get_data[currency_pair1]['val'],2) # currency pair rate rounded
 
 try:
     if previous_usd < rate_usd:
-        change_symbol_usd_usd = '⬆️'
+        change_symbol_usd = '⬆️'
     elif previous_usd == rate_usd: 
         change_symbol_usd = '↔️'
     else: 
