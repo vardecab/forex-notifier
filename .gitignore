@@ -10,3 +10,8 @@ API_key.*
 
 # files for automations
 automate
+
+# unused icons 
+icons/v1
+icons/v2
+icons/v3

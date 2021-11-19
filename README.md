@@ -20,6 +20,7 @@ Lorem ipsum -->
 
 ## Release History
 
+- 0.8: Notification icon is selected based on the trend.
 - 0.7: Cleaned the structure a bit; switched to use variables `base_currency` & `currency#` to get rates.
 - 0.6: Notifications re-enabled.
 - 0.5: Added a branch with function to reduce SLOC (-35%). Notifications disabled.
