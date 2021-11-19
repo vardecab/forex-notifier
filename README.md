@@ -20,6 +20,7 @@ Lorem ipsum -->
 
 ## Release History
 
+- 0.10: Added custom alerts via IFTTT (using webhook).
 - 0.9: Click notification to go to URL with charts.
 - 0.8: Notification icon is selected based on the trend.
 - 0.7: Cleaned the structure a bit; switched to use variables `base_currency` & `currency#` to get rates.

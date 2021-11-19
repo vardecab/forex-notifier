@@ -5,8 +5,8 @@ todo
 # old files
 _old
 
-# API
-API_key.*
+# API keys
+api
 
 # files for automations
 automate
@@ -15,3 +15,6 @@ automate
 icons/v1
 icons/v2
 icons/v3
+
+# files used for comparison 
+comparison_files

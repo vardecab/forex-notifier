@@ -6,6 +6,7 @@
 
 import requests # access API URL 
 import time # calculate script's run time
+import sys # terminate script
 # notifications ↓ 
 from sys import platform # check platform (Windows/macOS)
 if platform == 'win32':
@@ -13,7 +14,7 @@ if platform == 'win32':
     toaster = ToastNotifier() # initialize win10toast
 elif platform == 'darwin':
     import pync # macOS notifications
-import webbrowser # open URLs
+import webbrowser # open URLs from notification
 
 # --------- start + run time --------- #
 
@@ -23,7 +24,13 @@ print("Starting the script...")
 # ------------- build URL ------------ #
 
 API_url = 'https://free.currconv.com/api/v7/convert' # API URL 
-API_key = open("API_key.txt", "r").read() # read API key from file
+try: 
+    API_key = open("./api/TFCC_API-key.txt", "r").read() # read API key from file
+except FileNotFoundError: 
+    print("Couldn't find The Free Currency Converter API key. Add file to the folder / check file name.")
+    print("Closing...")
+    sys.exit() # terminate script
+    
 API_key = '?apiKey='+API_key # join URL parameter with value
 compact = '&compact=y' # get "compact" response from API - ain't need no fluff
 
@@ -34,6 +41,8 @@ def getRates(currency, base_currency):
     currency = currency.upper() # must be in uppercase for API call
     base_currency = base_currency.upper() # must be in uppercase for API call
     
+    # --------- get previous rate -------- #
+    
     try:
         previous_rate = float(open("./comparison_files/" + currency + ".txt", "r").read()) # read previous rate
         # print(f'Previous rate loaded.') # status
@@ -41,12 +50,17 @@ def getRates(currency, base_currency):
         #* NOTE: File doesn't exist, 1) first launch or 2) there was a problem with saving the value last time the script ran. 
         pass # let's move on 
 
+    # --------- get current rate --------- #
+    
     currency_pair = currency + "_" + base_currency # desired currency + base_currency
     get_data = requests.get(url=API_url + API_key + '&q=' + currency_pair + compact).json() # get data from API
     rate = round(get_data[currency_pair]['val'],2) # currency pair rate rounded to 2 decimals
     
+    # --------------- trend -------------- #
+    
     trend = 0 # based on trend decide which icon to use in notification 
     
+    # ----------- show symbols ----------- #
     try:
         if previous_rate < rate:
             change_symbol = '⬆️'
@@ -60,11 +74,15 @@ def getRates(currency, base_currency):
     except NameError: # variable doesn't exist
         #* NOTE: Variable doesn't exist, either 1) first launch or 2) there was a problem with saving the value last time the script ran.
         pass # let's move on
-
+    
+    # ---- save current rate for later --- #
+    
     with open("./comparison_files/" + currency + ".txt", "w") as file: # save current rate for comparison in the next run
         file.write(str(rate))
         # print(f'File {file} saved.') # status
-        
+    
+    # ----------- return values ---------- #
+    
     return [rate, change_symbol, previous_rate, trend] # return a list with values to be used in notification 
     #* NOTE: 1/2: eg. get_currency1[0] => rate; get_currency1[1] => change_symbol; get_currency1[2] => previous_rate 
     
@@ -81,6 +99,41 @@ currency3 = 'gbp'
 get_currency1 = getRates(currency1, base_currency)
 get_currency2 = getRates(currency2, base_currency)
 get_currency3 = getRates(currency3, base_currency)
+
+# ---- IFTTT automation for alerts --- #
+
+try: 
+    ifttt_maker_key = open('./api/IFTTT-key.txt', 'r').read() # read API key
+except FileNotFoundError:
+    print("Couldn't find IFTTT API key. Add file to the folder / check file name.")
+    print("Closing...")
+    sys.exit() # terminate script
+
+event_name = 'forex' 
+webhook_url = f'https://maker.ifttt.com/trigger/{event_name}/with/key/{ifttt_maker_key}'
+
+def send_to_IFTTT(currency, rate):
+    # data passed to IFTTT
+    currency = currency.upper() # nice and tidy
+    report = {
+        "value1": currency,
+        "value2": rate
+        # "value3": <value>
+    }
+    requests.post(webhook_url, data=report) # send data to IFTTT
+    print("Alert sent to IFTTT.")
+
+# ----------- custom alert ----------- #
+
+# EUR <= 4.60 PLN
+if get_currency2[0] <= 4.60:
+    send_to_IFTTT(currency2, get_currency2[0])
+    print(f'{currency2.upper()}: {get_currency2[0]} !!!')
+    
+# GBP <= 5.50 PLN
+if get_currency3[0] <= 5.50:
+    send_to_IFTTT(currency3, get_currency3[0])
+    print(f'{currency3.upper()}: {get_currency3[0]} !!!')
 
 # ---------- calculate trend --------- #
 
