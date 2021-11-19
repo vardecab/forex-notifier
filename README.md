@@ -20,6 +20,7 @@ Lorem ipsum -->
 
 ## Release History
 
+- 0.7: Cleaned the structure a bit; switched to use variables `base_currency` & `currency#` to get rates.
 - 0.6: Notifications re-enabled.
 - 0.5: Added a branch with function to reduce SLOC (-35%). Notifications disabled.
 - 0.4.1: Tiny bug fix related to variable.

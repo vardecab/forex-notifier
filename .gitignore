@@ -1,5 +1,12 @@
 # other 
 .vscode
 todo
+
+# old files
 _old
+
+# API
 API_key.*
+
+# files for automations
+automate
