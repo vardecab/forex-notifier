@@ -13,6 +13,7 @@ if platform == 'win32':
     toaster = ToastNotifier() # initialize win10toast
 elif platform == 'darwin':
     import pync # macOS notifications
+import webbrowser # open URLs
 
 # --------- start + run time --------- #
 
@@ -97,30 +98,43 @@ elif trend <= -2: # at least 2 currencies are trending down
     
 print(f'Trend is: {trend}')
 
+# --- open charts from notification -- #
+
+# for macOS
+page_url = 'https://www.walutomat.pl/kursy-walut/'
+
+# for Windows
+def open_url():
+    try: 
+        webbrowser.open_new(page_url)
+        print('Opening URL...')  
+    except: 
+        print('Failed to open URL. Unsupported variable type.')
+
 # ----------- notifications ---------- #
 
 try:
     if trend == 'up':
         if platform == "darwin": # macOS
             #* NOTE: 2/2
-            pync.notify(f'{currency1.upper()}: {get_currency1[0]} {get_currency1[1]} ({get_currency1[2]})\n{currency2.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})\n{currency3.upper()}: {get_currency3[0]} {get_currency3[1]} ({get_currency3[2]})', title='Forex update:', contentImage="https://cdn-icons.flaticon.com/png/512/3148/premium/3148312.png?token=exp=1637320365~hmac=e35848f7c1414dcf0998a9700363dd8c", sound="Funk")
+            pync.notify(f'{currency1.upper()}: {get_currency1[0]} {get_currency1[1]} ({get_currency1[2]})\n{currency2.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})\n{currency3.upper()}: {get_currency3[0]} {get_currency3[1]} ({get_currency3[2]})', title='Forex update:', contentImage="https://cdn-icons.flaticon.com/png/512/3148/premium/3148312.png?token=exp=1637320365~hmac=e35848f7c1414dcf0998a9700363dd8c", sound="Funk", open=page_url)
         elif platform == "win32": # Windows
             # TODO: check if it works 
-            toaster.show_toast(title="Forex update", msg=f'{currency1.upper()}: {get_currency1[0]} {get_currency1[1]} ({get_currency1[2]})\n{currency2.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})\n{currency3.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})', icon_path="", duration=None, threaded=True) # duration=None - leave notification in Notification Center; threaded=True - rest of the script will be allowed to be executed while the notification is still active
+            toaster.show_toast(title="Forex update", msg=f'{currency1.upper()}: {get_currency1[0]} {get_currency1[1]} ({get_currency1[2]})\n{currency2.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})\n{currency3.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})', icon_path="", duration=None, threaded=True, callback_on_click=open_url) # duration=None - leave notification in Notification Center; threaded=True - rest of the script will be allowed to be executed while the notification is still active
     elif trend == 'const':
         if platform == "darwin": # macOS
             #* NOTE: 2/2
-            pync.notify(f'{currency1.upper()}: {get_currency1[0]} {get_currency1[1]} ({get_currency1[2]})\n{currency2.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})\n{currency3.upper()}: {get_currency3[0]} {get_currency3[1]} ({get_currency3[2]})', title='Forex update:', contentImage="https://cdn-icons.flaticon.com/png/512/3148/premium/3148400.png?token=exp=1637320306~hmac=0b5e2a5f5a2edaf0f24700f8bff71a7b", sound="Funk")
+            pync.notify(f'{currency1.upper()}: {get_currency1[0]} {get_currency1[1]} ({get_currency1[2]})\n{currency2.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})\n{currency3.upper()}: {get_currency3[0]} {get_currency3[1]} ({get_currency3[2]})', title='Forex update:', contentImage="https://cdn-icons.flaticon.com/png/512/3148/premium/3148400.png?token=exp=1637320306~hmac=0b5e2a5f5a2edaf0f24700f8bff71a7b", sound="Funk", open=page_url)
         elif platform == "win32": # Windows
             # TODO: check if it works 
-            toaster.show_toast(title="Forex update", msg=f'{currency1.upper()}: {get_currency1[0]} {get_currency1[1]} ({get_currency1[2]})\n{currency2.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})\n{currency3.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})', icon_path="", duration=None, threaded=True) # duration=None - leave notification in Notification Center; threaded=True - rest of the script will be allowed to be executed while the notification is still active
+            toaster.show_toast(title="Forex update", msg=f'{currency1.upper()}: {get_currency1[0]} {get_currency1[1]} ({get_currency1[2]})\n{currency2.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})\n{currency3.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})', icon_path="", duration=None, threaded=True, callback_on_click=open_url) # duration=None - leave notification in Notification Center; threaded=True - rest of the script will be allowed to be executed while the notification is still active
     elif trend == 'down':
         if platform == "darwin": # macOS
             #* NOTE: 2/2
-            pync.notify(f'{currency1.upper()}: {get_currency1[0]} {get_currency1[1]} ({get_currency1[2]})\n{currency2.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})\n{currency3.upper()}: {get_currency3[0]} {get_currency3[1]} ({get_currency3[2]})', title='Forex update:', contentImage="https://cdn-icons.flaticon.com/png/512/3148/premium/3148295.png?token=exp=1637320361~hmac=895a71f03d776c45d98e619226eff099", sound="Funk")
+            pync.notify(f'{currency1.upper()}: {get_currency1[0]} {get_currency1[1]} ({get_currency1[2]})\n{currency2.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})\n{currency3.upper()}: {get_currency3[0]} {get_currency3[1]} ({get_currency3[2]})', title='Forex update:', contentImage="https://cdn-icons.flaticon.com/png/512/3148/premium/3148295.png?token=exp=1637320361~hmac=895a71f03d776c45d98e619226eff099", sound="Funk", open=page_url)
         elif platform == "win32": # Windows
             # TODO: check if it works 
-            toaster.show_toast(title="Forex update", msg=f'{currency1.upper()}: {get_currency1[0]} {get_currency1[1]} ({get_currency1[2]})\n{currency2.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})\n{currency3.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})', icon_path="", duration=None, threaded=True) # duration=None - leave notification in Notification Center; threaded=True - rest of the script will be allowed to be executed while the notification is still active
+            toaster.show_toast(title="Forex update", msg=f'{currency1.upper()}: {get_currency1[0]} {get_currency1[1]} ({get_currency1[2]})\n{currency2.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})\n{currency3.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})', icon_path="", duration=None, threaded=True, callback_on_click=open_url) # duration=None - leave notification in Notification Center; threaded=True - rest of the script will be allowed to be executed while the notification is still active
 except NameError: # variable doesn't exist because file doesn't exist
     #* NOTE: First launch or there was a problem with saving the value.
     pass
