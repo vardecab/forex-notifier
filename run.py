@@ -54,7 +54,7 @@ def getRates(currency, base_currency):
     
     currency_pair = currency + "_" + base_currency # desired currency + base_currency
     get_data = requests.get(url=API_url + API_key + '&q=' + currency_pair + compact).json() # get data from API
-    rate = round(get_data[currency_pair]['val'],2) # currency pair rate rounded to 2 decimals
+    rate = round(get_data[currency_pair]['val'],3) # currency pair rate rounded to 3 decimals
     
     # --------------- trend -------------- #
     
@@ -110,10 +110,11 @@ except FileNotFoundError:
     sys.exit() # terminate script
 
 event_name = 'forex' 
-webhook_url = f'https://maker.ifttt.com/trigger/{event_name}/with/key/{ifttt_maker_key}'
+webhook_url = f'https://maker.ifttt.com/trigger/{event_name}/with/key/{ifttt_maker_key}' # build URL
 
 def send_to_IFTTT(currency, rate):
-    # data passed to IFTTT
+    
+    # data passed to IFTTT ↓
     currency = currency.upper() # nice and tidy
     report = {
         "value1": currency,
@@ -142,11 +143,11 @@ if get_currency3[0] <= 5.50:
 trend = get_currency1[3] + get_currency2[3] + get_currency3[3] # add all trend values from currencies that ran in the function 
 print(f'Trend value: {trend}')
 
-if trend >= 2: # 2 currencies are trending up
+if trend > 1: # 2 currencies are trending up
     trend = 'up'
 elif trend <= 1 and trend >= -1: # ups and downs
     trend = 'const'
-elif trend <= -2: # at least 2 currencies are trending down
+elif trend < -2: # at least 2 currencies are trending down
     trend = 'down'
     
 print(f'Trend is: {trend}')
@@ -166,25 +167,30 @@ def open_url():
 
 # ----------- notifications ---------- #
 
+# icons for macOS notifications
+iconUp = 'https://i.postimg.cc/FK019QHq/arrow-up.png'
+iconConst = 'https://i.postimg.cc/xTkffSsR/minimize.png'
+iconDown = 'https://i.postimg.cc/JzVLRHHr/arrow-down.png'
+
 try:
     if trend == 'up':
         if platform == "darwin": # macOS
             #* NOTE: 2/2
-            pync.notify(f'{currency1.upper()}: {get_currency1[0]} {get_currency1[1]} ({get_currency1[2]})\n{currency2.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})\n{currency3.upper()}: {get_currency3[0]} {get_currency3[1]} ({get_currency3[2]})', title='Forex update:', contentImage="https://cdn-icons.flaticon.com/png/512/3148/premium/3148312.png?token=exp=1637320365~hmac=e35848f7c1414dcf0998a9700363dd8c", sound="Funk", open=page_url)
+            pync.notify(f'{currency1.upper()}: {get_currency1[0]} {get_currency1[1]} ({get_currency1[2]})\n{currency2.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})\n{currency3.upper()}: {get_currency3[0]} {get_currency3[1]} ({get_currency3[2]})', title='Forex update:', contentImage=iconUp, sound="Funk", open=page_url)
         elif platform == "win32": # Windows
             # TODO: check if it works 
             toaster.show_toast(title="Forex update", msg=f'{currency1.upper()}: {get_currency1[0]} {get_currency1[1]} ({get_currency1[2]})\n{currency2.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})\n{currency3.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})', icon_path="", duration=None, threaded=True, callback_on_click=open_url) # duration=None - leave notification in Notification Center; threaded=True - rest of the script will be allowed to be executed while the notification is still active
     elif trend == 'const':
         if platform == "darwin": # macOS
             #* NOTE: 2/2
-            pync.notify(f'{currency1.upper()}: {get_currency1[0]} {get_currency1[1]} ({get_currency1[2]})\n{currency2.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})\n{currency3.upper()}: {get_currency3[0]} {get_currency3[1]} ({get_currency3[2]})', title='Forex update:', contentImage="https://cdn-icons.flaticon.com/png/512/3148/premium/3148400.png?token=exp=1637320306~hmac=0b5e2a5f5a2edaf0f24700f8bff71a7b", sound="Funk", open=page_url)
+            pync.notify(f'{currency1.upper()}: {get_currency1[0]} {get_currency1[1]} ({get_currency1[2]})\n{currency2.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})\n{currency3.upper()}: {get_currency3[0]} {get_currency3[1]} ({get_currency3[2]})', title='Forex update:', contentImage=iconConst, sound="Funk", open=page_url)
         elif platform == "win32": # Windows
             # TODO: check if it works 
             toaster.show_toast(title="Forex update", msg=f'{currency1.upper()}: {get_currency1[0]} {get_currency1[1]} ({get_currency1[2]})\n{currency2.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})\n{currency3.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})', icon_path="", duration=None, threaded=True, callback_on_click=open_url) # duration=None - leave notification in Notification Center; threaded=True - rest of the script will be allowed to be executed while the notification is still active
     elif trend == 'down':
         if platform == "darwin": # macOS
             #* NOTE: 2/2
-            pync.notify(f'{currency1.upper()}: {get_currency1[0]} {get_currency1[1]} ({get_currency1[2]})\n{currency2.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})\n{currency3.upper()}: {get_currency3[0]} {get_currency3[1]} ({get_currency3[2]})', title='Forex update:', contentImage="https://cdn-icons.flaticon.com/png/512/3148/premium/3148295.png?token=exp=1637320361~hmac=895a71f03d776c45d98e619226eff099", sound="Funk", open=page_url)
+            pync.notify(f'{currency1.upper()}: {get_currency1[0]} {get_currency1[1]} ({get_currency1[2]})\n{currency2.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})\n{currency3.upper()}: {get_currency3[0]} {get_currency3[1]} ({get_currency3[2]})', title='Forex update:', contentImage=iconDown, sound="Funk", open=page_url)
         elif platform == "win32": # Windows
             # TODO: check if it works 
             toaster.show_toast(title="Forex update", msg=f'{currency1.upper()}: {get_currency1[0]} {get_currency1[1]} ({get_currency1[2]})\n{currency2.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})\n{currency3.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})', icon_path="", duration=None, threaded=True, callback_on_click=open_url) # duration=None - leave notification in Notification Center; threaded=True - rest of the script will be allowed to be executed while the notification is still active

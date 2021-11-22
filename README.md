@@ -20,6 +20,7 @@ Lorem ipsum -->
 
 ## Release History
 
+- 0.10.1: Changed URLs for icons used in macOS notifications; switched from showing 2 to 3 decimals; small tweak to how trend is calculated.
 - 0.10: Added custom alerts via IFTTT (using webhook).
 - 0.9: Click notification to go to URL with charts.
 - 0.8: Notification icon is selected based on the trend.
