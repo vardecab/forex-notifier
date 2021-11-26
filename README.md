@@ -4,9 +4,14 @@
 
 >Simple script to show forex rates as Windows 10/11 / macOS notification.
 
-<!-- ## Screenshots -->
+## Screenshots
 
-<!-- ![]() -->
+Windows:
+![0](https://user-images.githubusercontent.com/6877391/143601416-f47e87d5-6a51-4657-905c-819a2b9cc368.jpg)
+macOS:
+![1@2x](https://user-images.githubusercontent.com/6877391/143601426-0c3242fd-d0ad-4af3-ab60-926217f34f0b.jpg)
+![2](https://i.postimg.cc/FzDcCr58/screenshot.png)
+
 
 <!-- ## How to use
 
@@ -22,6 +27,12 @@ Lorem ipsum -->
 
 - 1.0.1: Tiny tweak in Windows notifications' title.
 - 1.0.0: Instead of using API the script is scraping Google; switched back to showing 2 instead of 3 decimals; fixed Windows notifications' text; added some more comments.
+<details>
+
+<summary>
+Click to see all updates < 1.0.0
+</summary>
+
 - 0.11: Windows notifications: tested & improved + added icons; added API status to README.
 - 0.10.1: Changed URLs for icons used in macOS notifications; switched from showing 2 to 3 decimals; small tweak to how trend is calculated.
 - 0.10: Added custom alerts via IFTTT (using webhook).
@@ -36,17 +47,9 @@ Lorem ipsum -->
 - 0.2: Improved code so only the currency pair rate is shown without JSON stuff.
 - 0.1: Initial release.
 
-<!-- <details>
+</details>
 
-<summary>
-Click to see all updates < #.##
-</summary> -->
-
-<!-- - Lorem ipsum -->
-
-<!-- </details> -->
-
-<!-- <br> -->
+<br>
 
 ## Versioning
 
@@ -55,7 +58,6 @@ Using [SemVer](http://semver.org/).
 ## License
 
 ![](https://img.shields.io/github/license/vardecab/forex-notifier)
-<!-- GNU General Public License v3.0, see [LICENSE.md](https://github.com/vardecab/umbrella/blob/master/LICENSE). -->
 
 ## Acknowledgements
 

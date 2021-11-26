@@ -171,7 +171,7 @@ print(f'Trend is: {trend}')
 # --- open charts from notification -- #
 
 # for macOS
-page_url = 'https://www.walutomat.pl/kursy-walut/' # TODO: change
+page_url = 'https://www.walutomat.pl/kursy-walut/'
 
 # for Windows
 def open_url():
