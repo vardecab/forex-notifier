@@ -20,6 +20,7 @@ Lorem ipsum -->
 
 ## Release History
 
+- 1.0.1: Tiny tweak in Windows notifications' title.
 - 1.0.0: Instead of using API the script is scraping Google; switched back to showing 2 instead of 3 decimals; fixed Windows notifications' text; added some more comments.
 - 0.11: Windows notifications: tested & improved + added icons; added API status to README.
 - 0.10.1: Changed URLs for icons used in macOS notifications; switched from showing 2 to 3 decimals; small tweak to how trend is calculated.
