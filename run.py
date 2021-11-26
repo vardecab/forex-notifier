@@ -4,9 +4,16 @@
 
 # ------------ import libs ----------- #
 
-import requests # access API URL 
 import time # calculate script's run time
 import sys # terminate script
+import requests # send data via webhook to IFTTT
+
+# scraper 
+from urllib.request import urlopen, Request # open URLs; Request to work around blocked user-agent: https://stackoverflow.com/questions/16627227/
+from bs4 import BeautifulSoup # BeautifulSoup; parsing HTML
+import ssl # workaround for certificate issue: https://stackoverflow.com/questions/52805115/certificate-verify-failed-unable-to-get-local-issuer-certificate
+import certifi # workaround for certificate issue: https://stackoverflow.com/questions/52805115/certificate-verify-failed-unable-to-get-local-issuer-certificate
+
 # notifications ↓ 
 from sys import platform # check platform (Windows/macOS)
 if platform == 'win32':
@@ -19,47 +26,42 @@ import webbrowser # open URLs from notification
 # --------- start + run time --------- #
 
 start_time = time.time() # run time start
-print("Starting the script...")
+print("Starting the script...") # status
 
-# ------------- build URL ------------ #
+# ---------------- URL --------------- #
 
-API_url = 'https://free.currconv.com/api/v7/convert' # API URL 
-try: 
-    API_key = open("./api/TFCC_API-key.txt", "r").read() # read API key from file
-except FileNotFoundError: 
-    print("Couldn't find The Free Currency Converter API key. Add file to the folder / check file name.")
-    print("Closing...")
-    sys.exit() # terminate script
-    
-API_key = '?apiKey='+API_key # join URL parameter with value
-compact = '&compact=y' # get "compact" response from API - ain't need no fluff
+page_url = "https://www.google.com/search?q="
 
 # --------- let the fun begin -------- #
 
 def getRates(currency, base_currency): 
-
-    currency = currency.upper() # must be in uppercase for API call
-    base_currency = base_currency.upper() # must be in uppercase for API call
+    
+    currency = currency.upper() # nice and tidy
+    base_currency = base_currency.upper() # nice and tidy
     
     # --------- get previous rate -------- #
     
     try:
         previous_rate = float(open("./comparison_files/" + currency + ".txt", "r").read()) # read previous rate
-        # print(f'Previous rate loaded.') # status
+        print(f'Previous rate loaded.') # status
     except FileNotFoundError: # file doesn't exist
         #* NOTE: File doesn't exist, 1) first launch or 2) there was a problem with saving the value last time the script ran. 
         pass # let's move on 
 
     # --------- get current rate --------- #
     
-    currency_pair = currency + "_" + base_currency # desired currency + base_currency
     try:
-        get_data = requests.get(url=API_url + API_key + '&q=' + currency_pair + compact).json() # get data from API
+        print("Opening page...") # status
+        request = Request(page_url + currency + "+" + "to" + "+" + base_currency, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36 Edge/18.19582'}) # workaround for: Request -> blocked user agent
+        page = urlopen(request, timeout=3, context=ssl.create_default_context(cafile=certifi.where())) # workaround for: context -> certificate issue
     except: # couldn't download data
-        #* NOTE: Possible 5## error / API down.
-        print("Can't access API. Closing...")
+        print("Can't access page to download data. Closing...") # status
         sys.exit()
-    rate = round(get_data[currency_pair]['val'],2) # currency pair rate rounded to 3 decimals
+    
+    print("Scraping page...") # status
+    soup = BeautifulSoup(page, 'html.parser') # parse the page
+    get_rate = soup.select_one("#knowledge-currency__updatable-data-column > div.b1hJbf > div.dDoNo.ikb4Bb.gsrt > span.DFlfde.SwHCTb").attrs.get("data-value", None) # get value from HTML element
+    rate = round(float(get_rate),2)
     
     # --------------- trend -------------- #
     
@@ -84,21 +86,21 @@ def getRates(currency, base_currency):
             elif platform == 'darwin':
                 change_symbol = '⬇️'
             trend -= 1
-        print(f'{currency}: {rate} {change_symbol} ({previous_rate})')
+        print(f'{currency}: {rate:.2f} {change_symbol} ({previous_rate:.2f})') # :.2f used to always show 2 decimals
     except NameError: # variable doesn't exist
-        #* NOTE: Variable doesn't exist, either 1) first launch or 2) there was a problem with saving the value last time the script ran.
+    #     #* NOTE: Variable doesn't exist, either 1) first launch or 2) there was a problem with saving the value last time the script ran.
         pass # let's move on
     
     # ---- save current rate for later --- #
     
     with open("./comparison_files/" + currency + ".txt", "w") as file: # save current rate for comparison in the next run
-        file.write(str(rate))
-        # print(f'File {file} saved.') # status
+        file.write(str((f'{rate:.2f}')))
+        print(f'File with {currency} saved.') # status
     
     # ----------- return values ---------- #
     
     return [rate, change_symbol, previous_rate, trend] # return a list with values to be used in notification 
-    #* NOTE: 1/2: eg. get_currency1[0] => rate; get_currency1[1] => change_symbol; get_currency1[2] => previous_rate 
+    #* NOTE: 1/2: eg. get_currency1[0] => rate; get_currency1[1] => change_symbol; get_currency1[2] => previous_rate, etc.
     
 # ----- put your currencies here ----- #
 
@@ -120,7 +122,7 @@ try:
     ifttt_maker_key = open('./api/IFTTT-key.txt', 'r').read() # read API key
 except FileNotFoundError:
     print("Couldn't find IFTTT API key. Add file to the folder / check file name.")
-    print("Closing...")
+    print("Closing...") # status
     sys.exit() # terminate script
 
 event_name = 'forex' 
@@ -136,7 +138,7 @@ def send_to_IFTTT(currency, rate):
         # "value3": <value>
     }
     requests.post(webhook_url, data=report) # send data to IFTTT
-    print("Alert sent to IFTTT.")
+    print("Alert sent to IFTTT.") # status
 
 # ----------- custom alert ----------- #
 
@@ -169,13 +171,13 @@ print(f'Trend is: {trend}')
 # --- open charts from notification -- #
 
 # for macOS
-page_url = 'https://www.walutomat.pl/kursy-walut/'
+page_url = 'https://www.walutomat.pl/kursy-walut/' # TODO: change
 
 # for Windows
 def open_url():
     try: 
         webbrowser.open_new(page_url)
-        print('Opening URL...')  
+        print('Opening URL...') # status
     except: 
         print('Failed to open URL. Unsupported variable type.')
 
@@ -190,24 +192,21 @@ try:
     if trend == 'up':
         if platform == "darwin": # macOS
             #* NOTE: 2/2
-            pync.notify(f'{currency1.upper()}: {get_currency1[0]} {get_currency1[1]} ({get_currency1[2]})\n{currency2.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})\n{currency3.upper()}: {get_currency3[0]} {get_currency3[1]} ({get_currency3[2]})', title='Forex update:', contentImage=iconUp, sound="Funk", open=page_url)
+            pync.notify(f'{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})', title='Forex update:', contentImage=iconUp, sound="Funk", open=page_url)
         elif platform == "win32": # Windows
-            # TODO: check if it works 
-            toaster.show_toast(title="Forex update", msg=f'{currency1.upper()}: {get_currency1[0]} {get_currency1[1]} ({get_currency1[2]})\n{currency2.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})\n{currency3.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})', icon_path="./icons/v3/arrow-up.ico", duration=None, threaded=True, callback_on_click=open_url) # duration=None - leave notification in Notification Center; threaded=True - rest of the script will be allowed to be executed while the notification is still active
+            toaster.show_toast(title="Forex update", msg=f'{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})', icon_path="./icons/v3/arrow-up.ico", duration=None, threaded=True, callback_on_click=open_url) # duration=None - leave notification in Notification Center; threaded=True - rest of the script will be allowed to be executed while the notification is still active
     elif trend == 'const':
         if platform == "darwin": # macOS
             #* NOTE: 2/2
-            pync.notify(f'{currency1.upper()}: {get_currency1[0]} {get_currency1[1]} ({get_currency1[2]})\n{currency2.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})\n{currency3.upper()}: {get_currency3[0]} {get_currency3[1]} ({get_currency3[2]})', title='Forex update:', contentImage=iconConst, sound="Funk", open=page_url)
+            pync.notify(f'{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})', title='Forex update:', contentImage=iconConst, sound="Funk", open=page_url)
         elif platform == "win32": # Windows
-            # TODO: check if it works 
-            toaster.show_toast(title="Forex update", msg=f'{currency1.upper()}: {get_currency1[0]} {get_currency1[1]} ({get_currency1[2]})\n{currency2.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})\n{currency3.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})', icon_path="./icons/v3/minimize.ico", duration=None, threaded=True, callback_on_click=open_url) # duration=None - leave notification in Notification Center; threaded=True - rest of the script will be allowed to be executed while the notification is still active
+            toaster.show_toast(title="Forex update", msg=f'{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})', icon_path="./icons/v3/minimize.ico", duration=None, threaded=True, callback_on_click=open_url) # duration=None - leave notification in Notification Center; threaded=True - rest of the script will be allowed to be executed while the notification is still active
     elif trend == 'down':
         if platform == "darwin": # macOS
             #* NOTE: 2/2
-            pync.notify(f'{currency1.upper()}: {get_currency1[0]} {get_currency1[1]} ({get_currency1[2]})\n{currency2.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})\n{currency3.upper()}: {get_currency3[0]} {get_currency3[1]} ({get_currency3[2]})', title='Forex update:', contentImage=iconDown, sound="Funk", open=page_url)
+            pync.notify(f'{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})', title='Forex update:', contentImage=iconDown, sound="Funk", open=page_url)
         elif platform == "win32": # Windows
-            # TODO: check if it works 
-            toaster.show_toast(title="Forex update", msg=f'{currency1.upper()}: {get_currency1[0]} {get_currency1[1]} ({get_currency1[2]})\n{currency2.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})\n{currency3.upper()}: {get_currency2[0]} {get_currency2[1]} ({get_currency2[2]})', icon_path="./icons/v3/arrow-down.ico", duration=None, threaded=True, callback_on_click=open_url) # duration=None - leave notification in Notification Center; threaded=True - rest of the script will be allowed to be executed while the notification is still active
+            toaster.show_toast(title="Forex update", msg=f'{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})', icon_path="./icons/v3/arrow-down.ico", duration=None, threaded=True, callback_on_click=open_url) # duration=None - leave notification in Notification Center; threaded=True - rest of the script will be allowed to be executed while the notification is still active
 except NameError: # variable doesn't exist because file doesn't exist
     #* NOTE: First launch or there was a problem with saving the value.
     pass

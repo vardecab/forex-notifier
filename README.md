@@ -1,7 +1,6 @@
 # forex-notifier
 
 ![](https://img.shields.io/badge/platform-Windows%20%7C%20macOS-blue)
-![](https://img.shields.io/uptimerobot/status/m789859189-4bb9136670e57bcc80821689?label=API%20status)
 
 >Simple script to show forex rates as Windows 10/11 / macOS notification.
 
@@ -21,7 +20,7 @@ Lorem ipsum -->
 
 ## Release History
 
-<!-- - 0.12: Another small tweak to how trend is calculated; switched back to showing 2 instead of 3 decimals -->
+- 1.0.0: Instead of using API the script is scraping Google; switched back to showing 2 instead of 3 decimals; fixed Windows notifications' text; added some more comments.
 - 0.11: Windows notifications: tested & improved + added icons; added API status to README.
 - 0.10.1: Changed URLs for icons used in macOS notifications; switched from showing 2 to 3 decimals; small tweak to how trend is calculated.
 - 0.10: Added custom alerts via IFTTT (using webhook).
@@ -59,7 +58,6 @@ Using [SemVer](http://semver.org/).
 
 ## Acknowledgements
 
--   [The Free Currency Converter API](https://free.currencyconverterapi.com/)
 - Icons from [Flaticon](https://www.flaticon.com)
 
 ## Contributing
