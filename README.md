@@ -1,7 +1,6 @@
 # forex-notifier
 
 ![](https://img.shields.io/badge/platform-Windows%20%7C%20macOS-blue)
-![](https://img.shields.io/uptimerobot/status/m789859189-4bb9136670e57bcc80821689?label=API%20status)
 
 >Simple script to show forex rates as Windows 10/11 / macOS notification.
 
@@ -59,7 +58,6 @@ Using [SemVer](http://semver.org/).
 
 ## Acknowledgements
 
--   [The Free Currency Converter API](https://free.currencyconverterapi.com/)
 - Icons from [Flaticon](https://www.flaticon.com)
 
 ## Contributing
