@@ -1,6 +1,8 @@
 # other 
 .vscode
 todo
+.ds_store
+__pycache__
 
 # old files
 _old

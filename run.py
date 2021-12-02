@@ -23,6 +23,9 @@ elif platform == 'darwin':
     import pync # macOS notifications
 import webbrowser # open URLs from notification
 
+# import alert thresholds
+import alertThresholds # file
+
 # --------- start + run time --------- #
 
 start_time = time.time() # run time start
@@ -142,13 +145,13 @@ def send_to_IFTTT(currency, rate):
 
 # ----------- custom alert ----------- #
 
-# EUR <= 4.60 PLN
-if get_currency2[0] <= 4.60:
+# EUR <= x.xx PLN
+if get_currency2[0] <= float(alertThresholds.alertEUR):
     send_to_IFTTT(currency2, get_currency2[0])
     print(f'{currency2.upper()}: {get_currency2[0]} !!!')
     
-# GBP <= 5.50 PLN
-if get_currency3[0] <= 5.50:
+# GBP <= x.xx PLN
+if get_currency3[0] <= alertThresholds.alertGBP:
     send_to_IFTTT(currency3, get_currency3[0])
     print(f'{currency3.upper()}: {get_currency3[0]} !!!')
 
