@@ -25,9 +25,11 @@ Lorem ipsum -->
 
 ## Release History
 
+- 1.1: Added BTC; tweaked some text and comments.
 - 1.0.2: Moved alert thresholds to a separate file.
 - 1.0.1: Tiny tweak in Windows notifications' title.
 - 1.0.0: Instead of using API the script is scraping Google; switched back to showing 2 instead of 3 decimals; fixed Windows notifications' text; added some more comments.
+
 <details>
 
 <summary>
