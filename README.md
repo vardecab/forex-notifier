@@ -12,19 +12,9 @@ macOS:
 ![1@2x](https://user-images.githubusercontent.com/6877391/143601426-0c3242fd-d0ad-4af3-ab60-926217f34f0b.jpg)
 ![2](https://i.postimg.cc/FzDcCr58/screenshot.png)
 
-
-<!-- ## How to use
-
-Lorem ipsum -->
-
-<!-- ## Roadmap
-
-- Lorem ipsum
-- Lorem ipsum
-- Lorem ipsum -->
-
 ## Release History
 
+- 2.0.0: Google scraper is failing to obtain values so re-using previous API used in 0.x versions; added buy/sell notifications via IFTTT.
 - 1.1: Added BTC; tweaked some text and comments.
 - 1.0.2: Moved alert thresholds to a separate file.
 - 1.0.1: Tiny tweak in Windows notifications' title.
@@ -64,7 +54,12 @@ Using [SemVer](http://semver.org/).
 
 ## Acknowledgements
 
+- [Free Currency Converter API](https://free.currencyconverterapi.com)
 - Icons from [Flaticon](https://www.flaticon.com)
+- [IFTTT](https://ifttt.com)
+### Notifications
+- Windows: [win10toast-click](https://github.com/vardecab/win10toast-click)
+- macOS: [pync](https://github.com/SeTeM/pync)
 
 ## Contributing
 
