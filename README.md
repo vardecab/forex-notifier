@@ -8,6 +8,7 @@
 
 Windows:
 ![0](https://user-images.githubusercontent.com/6877391/143601416-f47e87d5-6a51-4657-905c-819a2b9cc368.jpg)
+
 macOS:
 ![1@2x](https://user-images.githubusercontent.com/6877391/143601426-0c3242fd-d0ad-4af3-ab60-926217f34f0b.jpg)
 ![2](https://i.postimg.cc/FzDcCr58/screenshot.png)
