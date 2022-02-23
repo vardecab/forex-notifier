@@ -18,17 +18,17 @@
 
 ### API key 
 
-- Get API key from [here](https://free.currencyconverterapi.com).
+- Get API key (for free, takes 2 mins) from [here](https://free.currencyconverterapi.com).
 - Create `api` folder in the root of the project.
 - Create `TFCC_API-key.txt` file in `api` folder.
-- Add your API key to that file and save.
+- Add your API key to that file and save it.
 
 ### `run.py`
 
 - Values are in PLN. In order to change that, change `base_currency` variable.
 - Change `currency1` … `currency4` to desired currencies.
 
-In both use codes from [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217).
+In both, use codes from [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217).
 
 - (🚧 temporary) If you don't want to use IFTTT (it's free) then you need to remove all references to IFTTT in the code.
 
@@ -38,6 +38,7 @@ In both use codes from [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217).
 
 ## Release History
 
+- 2.0.1: Switched to showing 4 decimals in alerts (left 2 decimals for everything else); added `try` & `except` for alerts so the script doesn't break if some thresholds are empty / disabled.
 - 2.0.0: Google scraper is failing to obtain values so re-using previous API used in 0.x versions; added buy/sell notifications via IFTTT.
 - 1.1: Added BTC; tweaked some text and comments.
 - 1.0.2: Moved alert thresholds to a separate file.

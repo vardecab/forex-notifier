@@ -63,7 +63,7 @@ def getRates(currency, base_currency):
         buildURL = API_url + API_key + '&q=' + currency_pair + compact
         print(buildURL) # debug
         get_data = requests.get(url=buildURL).json() # get data from API
-        rate = round(get_data[currency_pair]['val'],2) # take value from JSON returned from API and round to 2 decimals
+        rate = round(get_data[currency_pair]['val'],4) # take value from JSON returned from API and round to 4 decimals
     except:
         # NOTE: Possible 5## error / API down.
         print("Can't access API — check your Internet connection and API Server Status: https://free.currencyconverterapi.com. Closing...")
@@ -75,13 +75,13 @@ def getRates(currency, base_currency):
 
     # show symbols
     try:
-        if previous_rate < rate:
+        if previous_rate < round(rate,2):
             if platform == 'darwin':
                 change_symbol = '⬆️' # emoji
             elif platform == 'win32':
                 change_symbol = ">" # Windows neither does display emojis well nor ↑ ↓ in a toast notification 
             trend += 1
-        elif previous_rate == rate: 
+        elif previous_rate == round(rate,2): 
             if platform == 'darwin':
                 change_symbol = "↔️" # emoji
             elif platform == 'win32':
@@ -92,7 +92,8 @@ def getRates(currency, base_currency):
             elif platform == 'win32':
                 change_symbol = "<" # Windows neither does display emojis well nor ↑ ↓ in a toast notification 
             trend -= 1
-        print(f'{currency}: {rate:.2f} {change_symbol} ({previous_rate:.2f})') # :.2f used to always show 2 decimals
+        # print(f'{currency}: {rate:.2f} {change_symbol} ({previous_rate:.2f})') # :.2f used to always show 2 decimals
+        print(f'{currency}: {round(rate,2)} {change_symbol} ({previous_rate:.2f})') # :.2f used to always show 2 decimals
     except NameError: # variable doesn't exist
     #     # NOTE: Variable doesn't exist, either 1) first launch or 2) there was a problem with saving the value last time the script ran.
         pass # let's move on
@@ -152,34 +153,43 @@ def send_to_IFTTT(currency, rate, message):
 # ----------- custom alert ----------- #
 
 # USD
-if get_currency1[0] <= float(alertThresholds.alertUSD_buy):
-    message = 'kup'
-    send_to_IFTTT(currency1, get_currency1[0], message)
-    print(f'{currency1.upper()}: {get_currency1[0]} // BUY!!!')
-elif get_currency1[0] >= float(alertThresholds.alertUSD_sell):
-    message = 'sprzedaj'
-    send_to_IFTTT(currency1, get_currency1[0], message)
-    print(f'{currency1.upper()}: {get_currency1[0]} // SELL!!!')
+try:
+    if get_currency1[0] <= float(alertThresholds.alertUSD_buy):
+        message = 'kup'
+        send_to_IFTTT(currency1, get_currency1[0], message)
+        print(f'{currency1.upper()}: {get_currency1[0]} // BUY!!!')
+    elif get_currency1[0] >= float(alertThresholds.alertUSD_sell):
+        message = 'sprzedaj'
+        send_to_IFTTT(currency1, get_currency1[0], message)
+        print(f'{currency1.upper()}: {get_currency1[0]} // SELL!!!')
+except: 
+    pass
     
 # EUR
-if get_currency2[0] <= float(alertThresholds.alertEUR_buy):
-    message = 'kup'
-    send_to_IFTTT(currency2, get_currency2[0], message)
-    print(f'{currency2.upper()}: {get_currency2[0]} // BUY!!!')
-elif get_currency2[0] >= float(alertThresholds.alertEUR_sell):
-    message = 'sprzedaj'
-    send_to_IFTTT(currency2, get_currency2[0], message)
-    print(f'{currency2.upper()}: {get_currency2[0]} // SELL!!!')
+try:
+    if get_currency2[0] <= float(alertThresholds.alertEUR_buy):
+        message = 'kup'
+        send_to_IFTTT(currency2, get_currency2[0], message)
+        print(f'{currency2.upper()}: {get_currency2[0]} // BUY!!!')
+    elif get_currency2[0] >= float(alertThresholds.alertEUR_sell):
+        message = 'sprzedaj'
+        send_to_IFTTT(currency2, get_currency2[0], message)
+        print(f'{currency2.upper()}: {get_currency2[0]} // SELL!!!')
+except:
+    pass
 
 # GBP
-if get_currency3[0] <= float(alertThresholds.alertGBP_buy):
-    message = 'kup'
-    send_to_IFTTT(currency3, get_currency3[0], message)
-    print(f'{currency3.upper()}: {get_currency3[0]} // BUY!!!')
-elif get_currency3[0] >= float(alertThresholds.alertGBP_sell):
-    message = 'sprzedaj'
-    send_to_IFTTT(currency3, get_currency3[0], message)
-    print(f'{currency3.upper()}: {get_currency3[0]} // SELL!!!')
+try:
+    if get_currency3[0] <= float(alertThresholds.alertGBP_buy):
+        message = 'kup'
+        send_to_IFTTT(currency3, get_currency3[0], message)
+        print(f'{currency3.upper()}: {get_currency3[0]} // BUY!!!')
+    elif get_currency3[0] >= float(alertThresholds.alertGBP_sell):
+        message = 'sprzedaj'
+        send_to_IFTTT(currency3, get_currency3[0], message)
+        print(f'{currency3.upper()}: {get_currency3[0]} // SELL!!!')
+except:
+    pass
     
 # BTC ≥ x.xx USD
 if get_currency4[0] >= alertThresholds.alertBTC:
