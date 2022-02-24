@@ -38,6 +38,7 @@ In both, use codes from [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217).
 
 ## Release History
 
+- 2.0.2: Made IFTTT alerts optional.
 - 2.0.1: Switched to showing 4 decimals in alerts (left 2 decimals for everything else); added `try` & `except` for alerts so the script doesn't break if some thresholds are empty / disabled.
 - 2.0.0: Google scraper is failing to obtain values so re-using previous API used in 0.x versions; added buy/sell notifications via IFTTT.
 - 1.1: Added BTC; tweaked some text and comments.

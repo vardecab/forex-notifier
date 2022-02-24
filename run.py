@@ -31,7 +31,7 @@ API_url = 'https://free.currconv.com/api/v7/convert' # API URL
 try: 
     API_key = open("./api/TFCC_API-key.txt", "r").read() # read API key from file
 except FileNotFoundError: 
-    print("Couldn't find The Free Currency Converter API key. Add file to the folder / check file name.")
+    print("Couldn't find The Free Currency Converter API key — script can't work without it. Follow 'How to use' in README / add file to the `api` folder / check file name (`TFCC_API-key.txt`).")
     print("Closing...")
     sys.exit() # terminate script
 
@@ -130,13 +130,14 @@ get_currency4 = getRates(currency4, 'usd') # BTC <> USD
 try: 
     ifttt_maker_key = open('./api/IFTTT-key.txt', 'r').read() # read API key
 except FileNotFoundError:
-    print("Couldn't find IFTTT API key. Add file to the folder / check file name.")
-    print("Closing...") # status
-    sys.exit() # terminate script
-    # TODO: maybe pass instead? Not everyone has to have IFTTT.
+    print("Couldn't find IFTTT API key — alerts won't work. Add file to the `api` folder / check file name (`IFTTT-key.txt`) and try again.")
+    pass
 
-event_name = 'forex' 
-webhook_url = f'https://maker.ifttt.com/trigger/{event_name}/with/key/{ifttt_maker_key}' # build URL
+try: 
+    event_name = 'forex' # IFTTT event name which is used in recipes
+    webhook_url = f'https://maker.ifttt.com/trigger/{event_name}/with/key/{ifttt_maker_key}' # build URL
+except: 
+    pass
 
 def send_to_IFTTT(currency, rate, message):
     
