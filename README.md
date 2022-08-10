@@ -38,6 +38,7 @@ In both, use codes from [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217).
 
 ## Release History
 
+- 2.1.1: Fixed regression bug and cleaned the notification.
 - 2.1: Added [Binance API](https://binance-docs.github.io/apidocs/spot/en/) to get rates of different coins. 
 - 2.0.3: Added notification when API is down.
 - 2.0.2: Made IFTTT alerts optional.
