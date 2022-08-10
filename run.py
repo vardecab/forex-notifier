@@ -25,18 +25,32 @@ import alertThresholds # import local file
 start_time = time.time() # run time start
 print("Starting the script...") # status
 
-# ------------- build URL ------------ #
+# - get main API key and prepare URL - #
 
 API_url = 'https://free.currconv.com/api/v7/convert' # API URL 
 try: 
     API_key = open("./api/TFCC_API-key.txt", "r").read() # read API key from file
 except FileNotFoundError: 
     print("Couldn't find The Free Currency Converter API key — script can't work without it. Follow 'How to use' in README / add file to the `api` folder / check file name (`TFCC_API-key.txt`).")
-    print("Closing...")
+    print("Closing.")
     sys.exit() # terminate script
 
 API_key = f'?apiKey={API_key}'
 compact = '&compact=y' # get "compact" response from API - ain't need no fluff
+
+# ------------ crypto URL ------------ #
+
+crypto_API_url = "https://api.binance.com/api/v3/ticker/price" # API URL 
+
+# NOTE: API key not necessary for this Binance endpoint? 
+# try: 
+#     crypto_API_key = open("./api/n_api-key.txt", "r").read() # read API key from file
+# except FileNotFoundError: 
+#     print("Couldn't find Nomics API key — script can't work without it. Follow 'How to use' in README / add file to the `api` folder / check file name (`N_API-key.txt`).")
+#     print("Closing.")
+#     sys.exit() # terminate script
+
+# crypto_API_key = f'?apiKey={crypto_API_key}'
 
 # --------- let the fun begin -------- #
 
@@ -49,25 +63,45 @@ def getRates(currency, base_currency):
     
     try:
         previous_rate = float(open("./comparison_files/" + currency + ".txt", "r").read()) # read previous rate
-        # print(f'Previous rate loaded.') # status
+        print(f'Previous rate loaded.') # status
     except FileNotFoundError: # file doesn't exist
         # NOTE: File doesn't exist, 1) first launch or 2) there was a problem with saving the value last time the script ran. 
         pass # let's move on 
-
+    
     # --------- get current rate --------- #
     
-    currency_pair = currency + "_" + base_currency # desired currency + base_currency
-    print(currency_pair)
-    
     try:
+        currency_pair = currency + "_" + base_currency # desired currency + base_currency
+        # print(currency_pair) # debug
         buildURL = API_url + API_key + '&q=' + currency_pair + compact
-        print(buildURL) # debug
+        # print(buildURL) # debug
         get_data = requests.get(url=buildURL).json() # get data from API
         rate = round(get_data[currency_pair]['val'],4) # take value from JSON returned from API and round to 4 decimals
     except:
         # NOTE: Possible 5## error / API down.
-        print("Can't access API — check your Internet connection and API Server Status: https://free.currencyconverterapi.com. Closing...")
-        sys.exit()
+        
+        print("Can't access API — check your Internet connection and API Server Status: https://free.currencyconverterapi.com.")
+    
+        # URLs for macOS notification 
+        error ="https://i.postimg.cc/RZZwrDDH/error.png"
+        apiURL = "https://free.currencyconverterapi.com"
+    
+        # open API Server Status from Windows notification
+        def open_errorURL():
+            try: 
+                webbrowser.open_new(apiURL)
+                print('Opening URL...') # status
+            except: 
+                print('Failed to open URL.')
+                
+        # show notification about the error
+        if platform == "darwin": # macOS
+            pync.notify(f"Can't access API. Check your Internet connection and API Server Status.", title='forex-notifier', contentImage=error, sound="", open=apiURL)
+        elif platform == "win32": # Windows
+            toaster.show_toast(title="forex-notifier", msg=f"Can't access API. Check your Internet connection and API Server Status.", icon_path="./icons/v3/error.ico", duration=None, threaded=True, callback_on_click=open_errorURL) # duration=None - leave notification in Notification Center; threaded=True - rest of the script will be allowed to be executed while the notification is still active
+            
+        print("Closing.")
+        sys.exit() # close script
         
     # --------------- trend -------------- #
 
@@ -109,14 +143,35 @@ def getRates(currency, base_currency):
     return [rate, change_symbol, previous_rate, trend] # return a list with values to be used in notification
     # NOTE: 1/2: eg. get_currency1[0] => rate; get_currency1[1] => change_symbol; get_currency1[2] => previous_rate, etc.
     
+def getCryptoRates(currency):
+    # NOTE: MVP 
+    
+    buildURL_crypto = crypto_API_url + '?symbol=' + currency.upper() # Binance _is_ case-sensitive 
+    # print(buildURL_crypto) # debug
+    try:
+        get_data = requests.get(url=buildURL_crypto).json() # get data from API
+        rate = get_data['price'] # get specific value from returned JSON
+        rate = round(float(get_data),2) # convert str to float 
+        # print(get_data) # debug 
+    
+        return rate # return value to the variable outside of the function 
+    except: # possible server error
+        pass # don't worry about crypto, do the rest of the script 
+    
+    # TODO
+    # with open("./comparison_files/" + currency + ".txt", "w") as file: # save current rate for comparison in the next run
+    #     file.write(rate)
+    #     print(f'File with {currency} saved.') # status
+    
 # ----- put your currencies here ----- #
 
 base_currency = 'pln'
 
-currency1 = 'usd'
-currency2 = 'eur'
-currency3 = 'gbp'
+currency1 = 'usd' # 1st currency 
+currency2 = 'eur' # 2nd currency 
+currency3 = 'gbp' # ...
 currency4 = 'btc'
+currency5 = 'doteur'
 
 # ----- run function to get rates ---- #
 
@@ -124,6 +179,7 @@ get_currency1 = getRates(currency1, base_currency)
 get_currency2 = getRates(currency2, base_currency)
 get_currency3 = getRates(currency3, base_currency)
 get_currency4 = getRates(currency4, 'usd') # BTC <> USD
+get_currency5 = getCryptoRates(currency5) # DOT <> EUR
 
 # ---- IFTTT automation for alerts --- #
 
@@ -151,7 +207,7 @@ def send_to_IFTTT(currency, rate, message):
     requests.post(webhook_url, data=report) # send data to IFTTT
     print("Alert sent to IFTTT.") # status
 
-# ----------- custom alert ----------- #
+# ----------- custom alerts ---------- #
 
 # USD
 try:
@@ -165,7 +221,7 @@ try:
         print(f'{currency1.upper()}: {get_currency1[0]} // SELL!!!')
 except: 
     pass
-    
+
 # EUR
 try:
     if get_currency2[0] <= float(alertThresholds.alertEUR_buy):
@@ -193,9 +249,10 @@ except:
     pass
     
 # BTC ≥ x.xx USD
-if get_currency4[0] >= alertThresholds.alertBTC:
-    send_to_IFTTT(currency4, get_currency4[0])
-    print(f'{currency4.upper()}: {get_currency4[0]} !!!')
+# if get_currency4[0] >= alertThresholds.alertBTC:
+#     message = '' # empty but assigned, otherwise next line will crash without `message` 
+#     send_to_IFTTT(currency4, get_currency4[0], message)
+#     print(f'{currency4.upper()}: {get_currency4[0]} !!!')
 
 # ------------- BTC yield ------------ #
 
@@ -206,6 +263,22 @@ if BTCyield < 0:
     print(f'NEGATIVE BTC yield at: {BTCyield:.2f}%')
 else: 
     print(f'Positive BTC yield at: {BTCyield:.2f}%')
+    
+# ------------- DOT yield ------------ #
+
+myDOTpricePL = 30.95 # got 220714, price from Revolut
+try: 
+    # print(get_currency5) # debug 
+    # print(get_currency2[0]) # debug 
+    get_currency5 = get_currency5 * get_currency2[0] # get PLN from EUR
+    DOTyield = get_currency5/myDOTpricePL
+    DOTyield = -(100-(get_currency5/myDOTpricePL)*100)
+    if DOTyield < 0:
+        print(f'NEGATIVE DOT yield at: {DOTyield:.2f}%')
+    else: 
+        print(f'Positive DOT yield at: {DOTyield:.2f}%')
+except: # possible server error
+    pass
 
 # ---------- calculate trend --------- #
 
@@ -253,21 +326,21 @@ try:
     if trend == 'up': # if currencies are going up then display relevant icon (arrow up)
         if platform == "darwin": # macOS
             # NOTE: 2/2
-            pync.notify(f'{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n{currency4.upper()}: ${get_currency4[0]} {get_currency4[1]} ({BTCyield:.2f}%)', title='Forex update:', contentImage=iconUp, sound="Funk", open=page_url)
+            pync.notify(f'{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n{currency4.upper()}: ${get_currency4[0]} {get_currency4[1]} ({BTCyield:.2f}%)\nDOT: {get_currency5:.2f} zł ({DOTyield:.2f}%)', title='Forex update:', contentImage=iconUp, sound="", open=page_url)
         elif platform == "win32": # Windows
-            toaster.show_toast(title="Forex update:", msg=f'{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n{currency4.upper()}: ${get_currency4[0]} {get_currency4[1]} ({BTCyield:.2f}%)', icon_path="./icons/v3/arrow-up.ico", duration=None, threaded=True, callback_on_click=open_url) # duration=None - leave notification in Notification Center; threaded=True - rest of the script will be allowed to be executed while the notification is still active
+            toaster.show_toast(title="Forex update:", msg=f'{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n{currency4.upper()}: ${get_currency4[0]} {get_currency4[1]} ({BTCyield:.2f}%)\nDOT: {get_currency5:.2f} zł ({DOTyield:.2f}%)', icon_path="./icons/v3/arrow-up.ico", duration=None, threaded=True, callback_on_click=open_url) # duration=None - leave notification in Notification Center; threaded=True - rest of the script will be allowed to be executed while the notification is still active
     elif trend == 'const': # if currencies are not changing then display relevant icon (+)
         if platform == "darwin": # macOS
             # NOTE: 2/2
-            pync.notify(f'{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n{currency4.upper()}: ${get_currency4[0]} {get_currency4[1]} ({BTCyield:.2f}%)', title='Forex update:', contentImage=iconConst, sound="Funk", open=page_url)
+            pync.notify(f'{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n{currency4.upper()}: ${get_currency4[0]} {get_currency4[1]} ({BTCyield:.2f}%)\nDOT: {get_currency5:.2f} zł ({DOTyield:.2f}%)', title='Forex update:', contentImage=iconConst, sound="", open=page_url)
         elif platform == "win32": # Windows
-            toaster.show_toast(title="Forex update:", msg=f'{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n{currency4.upper()}: ${get_currency4[0]} {get_currency4[1]} ({BTCyield:.2f}%)', icon_path="./icons/v3/minimize.ico", duration=None, threaded=True, callback_on_click=open_url) # duration=None - leave notification in Notification Center; threaded=True - rest of the script will be allowed to be executed while the notification is still active
+            toaster.show_toast(title="Forex update:", msg=f'{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n{currency4.upper()}: ${get_currency4[0]} {get_currency4[1]} ({BTCyield:.2f}%)\nDOT: {get_currency5:.2f} zł ({DOTyield:.2f}%)', icon_path="./icons/v3/minimize.ico", duration=None, threaded=True, callback_on_click=open_url) # duration=None - leave notification in Notification Center; threaded=True - rest of the script will be allowed to be executed while the notification is still active
     elif trend == 'down': # if currencies are going down then display relevant icon (arrow down)
         if platform == "darwin": # macOS
             # NOTE: 2/2
-            pync.notify(f'{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n{currency4.upper()}: ${get_currency4[0]} {get_currency4[1]} ({BTCyield:.2f}%)', title='Forex update:', contentImage=iconDown, sound="Funk", open=page_url)
+            pync.notify(f'{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n{currency4.upper()}: ${get_currency4[0]} {get_currency4[1]} ({BTCyield:.2f}%)\nDOT: {get_currency5:.2f} zł ({DOTyield:.2f}%)', title='Forex update:', contentImage=iconDown, sound="", open=page_url)
         elif platform == "win32": # Windows
-            toaster.show_toast(title="Forex update:", msg=f'{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n{currency4.upper()}: ${get_currency4[0]} {get_currency4[1]} ({BTCyield:.2f}%)', icon_path="./icons/v3/arrow-down.ico", duration=None, threaded=True, callback_on_click=open_url) # duration=None - leave notification in Notification Center; threaded=True - rest of the script will be allowed to be executed while the notification is still active
+            toaster.show_toast(title="Forex update:", msg=f'{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n{currency4.upper()}: ${get_currency4[0]} {get_currency4[1]} ({BTCyield:.2f}%)\nDOT: {get_currency5:.2f} zł ({DOTyield:.2f}%)', icon_path="./icons/v3/arrow-down.ico", duration=None, threaded=True, callback_on_click=open_url) # duration=None - leave notification in Notification Center; threaded=True - rest of the script will be allowed to be executed while the notification is still active
 except NameError: # variable doesn't exist because file doesn't exist
     # NOTE: First launch or there was a problem with saving the value.
     pass

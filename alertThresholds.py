@@ -1,7 +1,13 @@
-alertEUR_buy = 4.50
-# alertEUR_sell = 4.55
-alertUSD_buy = 4.00
-# alertUSD_sell = 4.05
-alertGBP_buy = 5.40
-# alertGBP_sell = 5.45
+alertEUR_buy = 4.65
+alertEUR_sell = 4.77
+alertUSD_buy = 4.50
+alertUSD_sell = 4.60
+alertGBP_buy = 5.50
+alertGBP_sell = 5.60
 alertBTC = 45000
+
+# ---------------- JOP --------------- #
+
+# USD = 3,75 zł, ale ze stopniowym kupowaniem już od 3,90 zł (w postępie = co kilka groszy w dół coraz większa wymieniana kwota). W ubiegłym roku najtaniej kupowałem USD po 3,64999 zł.
+
+# EUR = 4,20 zł, ale ze stopniowym kupowaniem już od 4,50 zł.

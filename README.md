@@ -26,18 +26,20 @@
 ### `run.py`
 
 - Values are in PLN. In order to change that, change `base_currency` variable.
-- Change `currency1` … `currency4` to desired currencies.
+- Change `currency1` … `currency{#}` to desired currencies.
 
 In both, use codes from [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217).
 
-- (🚧 temporary) If you don't want to use IFTTT (it's free) then you need to remove all references to IFTTT in the code.
+- <s><i>(🚧 temporary) If you don't want to use IFTTT (it's free) then you need to remove all references to IFTTT in the code.</i></s> IFTTT is now optional as of v2.1.
 
 ### `alertThresholds.py` 
 
-- Modify file with desired values.
+- Modify this file with desired values to get alerts via IFTTT.
 
 ## Release History
 
+- 2.1: Added [Binance API](https://binance-docs.github.io/apidocs/spot/en/) to get rates of different coins. 
+- 2.0.3: Added notification when API is down.
 - 2.0.2: Made IFTTT alerts optional.
 - 2.0.1: Switched to showing 4 decimals in alerts (left 2 decimals for everything else); added `try` & `except` for alerts so the script doesn't break if some thresholds are empty / disabled.
 - 2.0.0: Google scraper is failing to obtain values so re-using previous API used in 0.x versions; added buy/sell notifications via IFTTT.
@@ -81,6 +83,7 @@ Using [SemVer](http://semver.org/).
 ## Acknowledgements
 
 - [Free Currency Converter API](https://free.currencyconverterapi.com)
+- [Binance API](https://binance-docs.github.io/apidocs/spot/en/)
 - Icons from [Flaticon](https://www.flaticon.com)
 - [IFTTT](https://ifttt.com)
 ### Notifications
