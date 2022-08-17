@@ -7,6 +7,7 @@
 import time # calculate script's run time
 import sys # terminate script
 import requests # send data via webhook to IFTTT
+from inspect import cleandoc # clean up whitespace in multiline strings
 
 # notifications ↓ 
 from sys import platform # check platform (Windows/macOS)
@@ -329,30 +330,93 @@ iconUp = 'https://i.postimg.cc/FK019QHq/arrow-up.png'
 iconConst = 'https://i.postimg.cc/xTkffSsR/minimize.png'
 iconDown = 'https://i.postimg.cc/JzVLRHHr/arrow-down.png'
 
-# NOTE: can't write a function notificationMessage()
+# TODO: can't write a function notificationMessage()
 # win10toast_click\__init__.py", line 140, in _show_toast
     # title))
 # TypeError: Objects of type 'function' can not be converted to Unicode.
+
+# NOTE: notification syntax: currency_name: currency_value currency_symbol currency_previous_value
+# TODO: simplify notifications to a function, too much repetition
 
 try:
     if trend == 'up': # if currencies are going up then display relevant icon (arrow up)
         if platform == "darwin": # macOS
             # NOTE: 2/2
-            pync.notify(f'{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n{currency4.upper()}: ${get_currency4[0]:.0f} ({BTCyield}%)\nDOT: {get_currency5:.2f} zł ({DOTyield}%)', title='Forex update:', contentImage=iconUp, sound="", open=page_url)
+            pync.notify(
+                f"{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n"
+                f"{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
+                f"{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
+                f"DOT: {get_currency5:.2f} zł ({DOTyield}%)\n"
+                f"{currency4.upper()}: ${get_currency4[0]:.0f} ({BTCyield}%)",
+                title='Forex update:', 
+                contentImage=iconUp, 
+                sound="",
+                open=page_url)
         elif platform == "win32": # Windows
-            toaster.show_toast(title="Forex update:", msg=f'{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n{currency4.upper()}: ${get_currency4[0]:.0f} ({BTCyield}%)\nDOT: {get_currency5:.2f} zł ({DOTyield}%)', icon_path="./icons/v3/arrow-up.ico", duration=None, threaded=True, callback_on_click=open_url) # duration=None - leave notification in Notification Center; threaded=True - rest of the script will be allowed to be executed while the notification is still active
+            toaster.show_toast(
+                title="Forex update:", 
+                msg=
+                f"{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n"
+                f"{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
+                f"{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
+                f"DOT: {get_currency5:.2f} zł ({DOTyield}%)\n"
+                f"{currency4.upper()}: ${get_currency4[0]:.0f} ({BTCyield}%)\n",
+                icon_path="./icons/v3/arrow-up.ico",
+                duration=None,
+                threaded=True,
+                callback_on_click=open_url) # duration=None - leave notification in Notification Center; threaded=True - rest of the script will be allowed to be executed while the notification is still active
     elif trend == 'const': # if currencies are not changing then display relevant icon (+)
         if platform == "darwin": # macOS
             # NOTE: 2/2
-            pync.notify(f'{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n{currency4.upper()}: ${get_currency4[0]:.0f} ({BTCyield}%)\nDOT: {get_currency5:.2f} zł ({DOTyield}%)', title='Forex update:', contentImage=iconConst, sound="", open=page_url)
+            pync.notify(
+                f"{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n"
+                f"{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
+                f"{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
+                f"DOT: {get_currency5:.2f} zł ({DOTyield}%)\n"
+                f"{currency4.upper()}: ${get_currency4[0]:.0f} ({BTCyield}%)",
+                title='Forex update:',
+                contentImage=iconConst,
+                sound="",
+                open=page_url)
         elif platform == "win32": # Windows
-            toaster.show_toast(title="Forex update:", msg=f'{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n{currency4.upper()}: ${get_currency4[0]:.0f} ({BTCyield}%)\nDOT: {get_currency5:.2f} zł ({DOTyield}%)', icon_path="./icons/v3/minimize.ico", duration=None, threaded=True, callback_on_click=open_url) # duration=None - leave notification in Notification Center; threaded=True - rest of the script will be allowed to be executed while the notification is still active
+            toaster.show_toast(
+                title="Forex update:", 
+                msg=
+                f"{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n"
+                f"{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
+                f"{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
+                f"DOT: {get_currency5:.2f} zł ({DOTyield}%)\n"
+                f"{currency4.upper()}: ${get_currency4[0]:.0f} ({BTCyield}%)\n",
+                icon_path="./icons/v3/minimize.ico",
+                duration=None,
+                threaded=True,
+                callback_on_click=open_url) # duration=None - leave notification in Notification Center; threaded=True - rest of the script will be allowed to be executed while the notification is still active
     elif trend == 'down': # if currencies are going down then display relevant icon (arrow down)
         if platform == "darwin": # macOS
             # NOTE: 2/2
-            pync.notify(f'{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n{currency4.upper()}: ${get_currency4[0]:.0f} ({BTCyield}%)\nDOT: {get_currency5:.2f} zł ({DOTyield}%)', title='Forex update:', contentImage=iconDown, sound="", open=page_url)
+            pync.notify(
+                f"{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n"
+                f"{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
+                f"{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
+                f"DOT: {get_currency5:.2f} zł ({DOTyield}%)\n"
+                f"{currency4.upper()}: ${get_currency4[0]:.0f} ({BTCyield}%)",
+                title='Forex update:',
+                contentImage=iconDown,
+                sound="",
+                open=page_url)
         elif platform == "win32": # Windows
-            toaster.show_toast(title="Forex update:", msg=f'{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n{currency4.upper()}: ${get_currency4[0]:.0f} ({BTCyield}%)\nDOT: {get_currency5:.2f} zł ({DOTyield}%)', icon_path="./icons/v3/arrow-down.ico", duration=None, threaded=True, callback_on_click=open_url) # duration=None - leave notification in Notification Center; threaded=True - rest of the script will be allowed to be executed while the notification is still active
+            toaster.show_toast(
+                title="Forex update:", 
+                msg=
+                f"{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n"
+                f"{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
+                f"{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
+                f"DOT: {get_currency5:.2f} zł ({DOTyield}%)\n"
+                f"{currency4.upper()}: ${get_currency4[0]:.0f} ({BTCyield}%)\n",
+                icon_path="./icons/v3/arrow-down.ico",
+                duration=None,
+                threaded=True,
+                callback_on_click=open_url) # duration=None - leave notification in Notification Center; threaded=True - rest of the script will be allowed to be executed while the notification is still active
 except NameError: # variable doesn't exist because file doesn't exist
     # NOTE: First launch or there was a problem with saving the value.
     pass

@@ -38,6 +38,7 @@ In both, use codes from [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217).
 
 ## Release History
 
+- 2.1.3: Further cleaning of notifications — this time to the code.
 - 2.1.2: Further notifications' text cleaning.
 - 2.1.1: Fixed regression bug and cleaned the text in notifications.
 - 2.1: Added [Binance API](https://binance-docs.github.io/apidocs/spot/en/) to get rates of different coins. 
