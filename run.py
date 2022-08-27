@@ -28,16 +28,16 @@ print("Starting the script...") # status
 
 # - get main API key and prepare URL - #
 
-API_url = 'https://free.currconv.com/api/v7/convert' # API URL 
+API_url = 'https://api.getgeoapi.com/v2/currency/convert' # API URL 
 try: 
-    API_key = open("./api/TFCC_API-key.txt", "r").read() # read API key from file
+    API_key = open("./api/CCAP_API-key.txt", "r").read() # read API key from file
 except FileNotFoundError: 
-    print("Couldn't find The Free Currency Converter API key — script can't work without it. Follow 'How to use' in README / add file to the `api` folder / check file name (`TFCC_API-key.txt`).")
+    print("Couldn't find Currency API key — script can't work without it. Follow 'How to use' in README / add file to the `api` folder / check file name (`CCAP_API-key.txt`).")
     print("Closing.")
     sys.exit() # terminate script
 
-API_key = f'?apiKey={API_key}'
-compact = '&compact=y' # get "compact" response from API - ain't need no fluff
+API_key = f'?api_key={API_key}'
+format = '&format=json' # get response from API in JSON
 
 # ------------ crypto URL ------------ #
 
@@ -65,27 +65,34 @@ def getRates(currency, base_currency):
     try:
         previous_rate = float(open("./comparison_files/" + currency + ".txt", "r").read()) # read previous rate
         print(f'Previous rate loaded.') # status
-    except FileNotFoundError: # file doesn't exist
-        # NOTE: File doesn't exist, 1) first launch or 2) there was a problem with saving the value last time the script ran. 
-        pass # let's move on 
+    except (FileNotFoundError, ValueError): # file doesn't exist
+        # NOTE: File doesn't exist, 1) first launch or 2) there was a problem with saving the value last time the script ran or 3) file is empty.
+        # pass # let's move on 
+        previous_rate = '' # let's move on
     
     # --------- get current rate --------- #
     
     try:
         currency_pair = currency + "_" + base_currency # desired currency + base_currency
+        currency_pair = f'&from={currency}&to={base_currency}' # build desired currency + base_currency pair
         # print(currency_pair) # debug
-        buildURL = API_url + API_key + '&q=' + currency_pair + compact
+        buildURL = API_url + API_key + currency_pair + format
         # print(buildURL) # debug
         get_data = requests.get(url=buildURL).json() # get data from API
-        rate = round(get_data[currency_pair]['val'],4) # take value from JSON returned from API and round to 4 decimals
+        # print(get_data)
+        rate = round(float(get_data['rates'][base_currency]['rate']),4) # take value from JSON returned from API and round to 4 decimals
+        # print(rate) # debug
+    
+    # ----- catch if it doesn't work ----- #
+    
     except:
         # NOTE: Possible 5## error / API down.
         
-        print("Can't access API — check your Internet connection and API Server Status: https://free.currencyconverterapi.com.")
+        print("Can't access API — check your Internet connection and API Server Status: https://currency.getgeoapi.com/status/")
     
         # URLs for macOS notification 
         error ="https://i.postimg.cc/RZZwrDDH/error.png"
-        apiURL = "https://free.currencyconverterapi.com"
+        apiURL = "https://currency.getgeoapi.com/status/"
     
         # open API Server Status from Windows notification
         def open_errorURL():
@@ -129,9 +136,10 @@ def getRates(currency, base_currency):
             trend -= 1
         # print(f'{currency}: {rate:.2f} {change_symbol} ({previous_rate:.2f})') # :.2f used to always show 2 decimals
         print(f'{currency}: {round(rate,2)} {change_symbol} ({previous_rate:.2f})') # :.2f used to always show 2 decimals
-    except NameError: # variable doesn't exist
+    except (NameError, UnboundLocalError, TypeError): # variable doesn't exist
     #     # NOTE: Variable doesn't exist, either 1) first launch or 2) there was a problem with saving the value last time the script ran.
-        pass # let's move on
+        # pass # let's move on
+        change_symbol = '' # let's move on
 
     # ---- save current rate for later --- #
 
@@ -171,15 +179,15 @@ base_currency = 'pln'
 currency1 = 'usd' # 1st currency 
 currency2 = 'eur' # 2nd currency 
 currency3 = 'gbp' # ...
-currency4 = 'btc'
-currency5 = 'doteur'
+currency4 = 'btcusdt' # 1st crypto; USDT should be 1:1 to USD
+currency5 = 'doteur' # 2nd crypto
 
 # ----- run function to get rates ---- #
 
 get_currency1 = getRates(currency1, base_currency)
 get_currency2 = getRates(currency2, base_currency)
 get_currency3 = getRates(currency3, base_currency)
-get_currency4 = getRates(currency4, 'usd') # BTC <> USD
+get_currency4 = getCryptoRates(currency4) # BTC <> EUR
 get_currency5 = getCryptoRates(currency5) # DOT <> EUR
 
 # ---- IFTTT automation for alerts --- #
@@ -202,24 +210,25 @@ def send_to_IFTTT(currency, rate, message):
     currency = currency.upper() # nice and tidy
     report = {
         "value1": currency,
-        "value2": rate,
+        "value2": f'{rate:.2f}',
         "value3": message # additional message 
     }
     requests.post(webhook_url, data=report) # send data to IFTTT
     print("Alert sent to IFTTT.") # status
 
 # ----------- custom alerts ---------- #
+# TODO: function to avoid unnecessary code
 
 # USD
 try:
     if get_currency1[0] <= float(alertThresholds.alertUSD_buy):
         message = 'kup'
         send_to_IFTTT(currency1, get_currency1[0], message)
-        print(f'{currency1.upper()}: {get_currency1[0]} // BUY!!!')
+        print(f'{currency1.upper()}: {get_currency1[0]:.2f} // BUY!!!')
     elif get_currency1[0] >= float(alertThresholds.alertUSD_sell):
         message = 'sprzedaj'
         send_to_IFTTT(currency1, get_currency1[0], message)
-        print(f'{currency1.upper()}: {get_currency1[0]} // SELL!!!')
+        print(f'{currency1.upper()}: {get_currency1[0]:.2f} // SELL!!!')
 except: 
     pass
 
@@ -228,11 +237,11 @@ try:
     if get_currency2[0] <= float(alertThresholds.alertEUR_buy):
         message = 'kup'
         send_to_IFTTT(currency2, get_currency2[0], message)
-        print(f'{currency2.upper()}: {get_currency2[0]} // BUY!!!')
+        print(f'{currency2.upper()}: {get_currency2[0]:.2f} // BUY!!!')
     elif get_currency2[0] >= float(alertThresholds.alertEUR_sell):
         message = 'sprzedaj'
         send_to_IFTTT(currency2, get_currency2[0], message)
-        print(f'{currency2.upper()}: {get_currency2[0]} // SELL!!!')
+        print(f'{currency2.upper()}: {get_currency2[0]:.2f} // SELL!!!')
 except:
     pass
 
@@ -241,15 +250,16 @@ try:
     if get_currency3[0] <= float(alertThresholds.alertGBP_buy):
         message = 'kup'
         send_to_IFTTT(currency3, get_currency3[0], message)
-        print(f'{currency3.upper()}: {get_currency3[0]} // BUY!!!')
+        print(f'{currency3.upper()}: {get_currency3[0]:.2f} // BUY!!!')
     elif get_currency3[0] >= float(alertThresholds.alertGBP_sell):
         message = 'sprzedaj'
         send_to_IFTTT(currency3, get_currency3[0], message)
-        print(f'{currency3.upper()}: {get_currency3[0]} // SELL!!!')
+        print(f'{currency3.upper()}: {get_currency3[0]:.2f} // SELL!!!')
 except:
     pass
     
 # BTC ≥ x.xx USD
+# NOTE: won't work after 3.0 update
 # if get_currency4[0] >= alertThresholds.alertBTC:
 #     message = '' # empty but assigned, otherwise next line will crash without `message` 
 #     send_to_IFTTT(currency4, get_currency4[0], message)
@@ -260,8 +270,8 @@ except:
 myBTCprice = 47317 # bought 220103, price from Statista 
 
 # calculate
-BTCyield = get_currency4[0]/myBTCprice
-BTCyield = -(100-(get_currency4[0]/myBTCprice)*100)
+BTCyield = get_currency4/myBTCprice
+BTCyield = -(100-(get_currency4/myBTCprice)*100)
 
 BTCyield = round(BTCyield,2) # round to 2 decimals
 
@@ -347,7 +357,7 @@ try:
                 f"{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
                 f"{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
                 f"DOT: {get_currency5:.2f} zł ({DOTyield}%)\n"
-                f"{currency4.upper()}: ${get_currency4[0]:.0f} ({BTCyield}%)",
+                f"{currency4.upper()}: ${get_currency4:.0f} ({BTCyield}%)",
                 title='Forex update:', 
                 contentImage=iconUp, 
                 sound="",
@@ -360,7 +370,7 @@ try:
                 f"{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
                 f"{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
                 f"DOT: {get_currency5:.2f} zł ({DOTyield}%)\n"
-                f"{currency4.upper()}: ${get_currency4[0]:.0f} ({BTCyield}%)\n",
+                f"{currency4.upper()}: ${get_currency4:.0f} ({BTCyield}%)\n",
                 icon_path="./icons/v3/arrow-up.ico",
                 duration=None,
                 threaded=True,
@@ -373,7 +383,7 @@ try:
                 f"{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
                 f"{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
                 f"DOT: {get_currency5:.2f} zł ({DOTyield}%)\n"
-                f"{currency4.upper()}: ${get_currency4[0]:.0f} ({BTCyield}%)",
+                f"{currency4.upper()}: ${get_currency4:.0f} ({BTCyield}%)",
                 title='Forex update:',
                 contentImage=iconConst,
                 sound="",
@@ -386,7 +396,7 @@ try:
                 f"{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
                 f"{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
                 f"DOT: {get_currency5:.2f} zł ({DOTyield}%)\n"
-                f"{currency4.upper()}: ${get_currency4[0]:.0f} ({BTCyield}%)\n",
+                f"{currency4.upper()}: ${get_currency4:.0f} ({BTCyield}%)\n",
                 icon_path="./icons/v3/minimize.ico",
                 duration=None,
                 threaded=True,
@@ -399,7 +409,7 @@ try:
                 f"{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
                 f"{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
                 f"DOT: {get_currency5:.2f} zł ({DOTyield}%)\n"
-                f"{currency4.upper()}: ${get_currency4[0]:.0f} ({BTCyield}%)",
+                f"{currency4.upper()}: ${get_currency4:.0f} ({BTCyield}%)",
                 title='Forex update:',
                 contentImage=iconDown,
                 sound="",
@@ -412,13 +422,13 @@ try:
                 f"{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
                 f"{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
                 f"DOT: {get_currency5:.2f} zł ({DOTyield}%)\n"
-                f"{currency4.upper()}: ${get_currency4[0]:.0f} ({BTCyield}%)\n",
+                f"{currency4.upper()}: ${get_currency4:.0f} ({BTCyield}%)\n",
                 icon_path="./icons/v3/arrow-down.ico",
                 duration=None,
                 threaded=True,
                 callback_on_click=open_url) # duration=None - leave notification in Notification Center; threaded=True - rest of the script will be allowed to be executed while the notification is still active
-except NameError: # variable doesn't exist because file doesn't exist
-    # NOTE: First launch or there was a problem with saving the value.
+except (NameError, ValueError): # variable doesn't exist because file doesn't exist
+    # NOTE: First launch or there was a problem with saving the value, or empty files.
     pass
 
 # ------------- run time ------------- #

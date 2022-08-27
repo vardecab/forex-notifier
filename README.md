@@ -18,9 +18,9 @@
 
 ### API key 
 
-- Get API key (for free, takes 2 mins) from [here](https://free.currencyconverterapi.com).
+- Get API key (for free, takes 2 mins) from [here](https://currency.getgeoapi.com).
 - Create `api` folder in the root of the project.
-- Create `TFCC_API-key.txt` file in `api` folder.
+- Create `CCAP_API-key.txt` file in `api` folder.
 - Add your API key to that file and save it.
 
 ### `run.py`
@@ -38,6 +38,14 @@ In both, use codes from [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217).
 
 ## Release History
 
+- 3.0.0: Changed API to [Currency API by API PLANT](https://currency.getgeoapi.com) because the old API wasn't showing correct values (probably outdated/cached ones from several days prior); added more catchers for exceptions to prevent script from failing.
+
+<details>
+
+<summary>
+Click to see all updates < 3.0.0
+</summary>
+
 - 2.1.3: Further cleaning of notifications — this time to the code.
 - 2.1.2: Further notifications' text cleaning.
 - 2.1.1: Fixed regression bug and cleaned the text in notifications.
@@ -46,10 +54,19 @@ In both, use codes from [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217).
 - 2.0.2: Made IFTTT alerts optional.
 - 2.0.1: Switched to showing 4 decimals in alerts (left 2 decimals for everything else); added `try` & `except` for alerts so the script doesn't break if some thresholds are empty / disabled.
 - 2.0.0: Google scraper is failing to obtain values so re-using previous API used in 0.x versions; added buy/sell notifications via IFTTT.
+</details>
+
+<details>
+
+<summary>
+Click to see all updates < 2.0.0
+</summary>
+
 - 1.1: Added BTC; tweaked some text and comments.
 - 1.0.2: Moved alert thresholds to a separate file.
 - 1.0.1: Tiny tweak in Windows notifications' title.
 - 1.0.0: Instead of using API the script is scraping Google; switched back to showing 2 instead of 3 decimals; fixed Windows notifications' text; added some more comments.
+</details>
 
 <details>
 
@@ -70,7 +87,6 @@ Click to see all updates < 1.0.0
 - 0.3: v1 of notifications added.
 - 0.2: Improved code so only the currency pair rate is shown without JSON stuff.
 - 0.1: Initial release.
-
 </details>
 
 <br>
@@ -85,7 +101,7 @@ Using [SemVer](http://semver.org/).
 
 ## Acknowledgements
 
-- [Free Currency Converter API](https://free.currencyconverterapi.com)
+- [Currency API by API PLANT](https://currency.getgeoapi.com) 
 - [Binance API](https://binance-docs.github.io/apidocs/spot/en/)
 - Icons from [Flaticon](https://www.flaticon.com)
 - [IFTTT](https://ifttt.com)
