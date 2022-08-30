@@ -5,9 +5,11 @@
 # ------------ import libs ----------- #
 
 import time # calculate script's run time
+from datetime import datetime # generate timestamp for saving data
 import sys # terminate script
 import requests # send data via webhook to IFTTT
 from inspect import cleandoc # clean up whitespace in multiline strings
+import re # regex
 
 # notifications ↓ 
 from sys import platform # check platform (Windows/macOS)
@@ -26,6 +28,10 @@ import alertThresholds # import local file
 start_time = time.time() # run time start
 print("Starting the script...") # status
 
+# ----- timestamp for saving data ---- #
+
+this_run_datetime = timestamp = datetime.strftime(datetime.now(), '%y%m%d-%H%M%S') # eg 210120-173112
+
 # - get main API key and prepare URL - #
 
 API_url = 'https://api.getgeoapi.com/v2/currency/convert' # API URL 
@@ -43,17 +49,7 @@ format = '&format=json' # get response from API in JSON
 
 crypto_API_url = "https://api.binance.com/api/v3/ticker/price" # API URL 
 
-# NOTE: API key not necessary for this Binance endpoint? 
-# try: 
-#     crypto_API_key = open("./api/n_api-key.txt", "r").read() # read API key from file
-# except FileNotFoundError: 
-#     print("Couldn't find Nomics API key — script can't work without it. Follow 'How to use' in README / add file to the `api` folder / check file name (`N_API-key.txt`).")
-#     print("Closing.")
-#     sys.exit() # terminate script
-
-# crypto_API_key = f'?apiKey={crypto_API_key}'
-
-# --------- let the fun begin -------- #
+# ---------- functions start --------- #
 
 def getRates(currency, base_currency): 
 
@@ -62,8 +58,11 @@ def getRates(currency, base_currency):
     
     # --------- get previous rate -------- #
     
-    try:
-        previous_rate = float(open("./comparison_files/" + currency + ".txt", "r").read()) # read previous rate
+    try:   
+        with open("./comparison_files/" + currency + ".txt", "r") as readFile: 
+            previous_rate = readFile.readlines()[-1] # read last line of the file
+        previous_rate = float((re.search('[ ][0-9]+\.[0-9]+',previous_rate)[0]).lstrip()) # use regex to find rate in the file, remove whitespace, convert string to float
+        # print(previous_rate) # debug
         print(f'Previous rate loaded.') # status
     except (FileNotFoundError, ValueError): # file doesn't exist
         # NOTE: File doesn't exist, 1) first launch or 2) there was a problem with saving the value last time the script ran or 3) file is empty.
@@ -141,11 +140,15 @@ def getRates(currency, base_currency):
         # pass # let's move on
         change_symbol = '' # let's move on
 
-    # ---- save current rate for later --- #
-
-    with open("./comparison_files/" + currency + ".txt", "w") as file: # save current rate for comparison in the next run
-        file.write(str((f'{rate:.2f}')))
-        print(f'File with {currency} saved.') # status
+    # -- save current rate to file later - #
+    
+    with open("./comparison_files/" + currency + ".txt", "a") as file: # save (append) current rate for comparison in future
+        file.write(str
+                   ((
+                       f'{timestamp}: {rate:.2f}\n'
+                       ))
+                   )
+        print(f'File with {currency.upper()} saved.') # status
 
     # ----------- return values ---------- #
 
@@ -162,16 +165,23 @@ def getCryptoRates(currency):
         rate = get_data['price'] # get specific value from returned JSON
         rate = round(float(rate),2) # convert str to float 
         # print(get_data) # debug 
-    
-        return rate # return value to the variable outside of the function 
     except: # possible server error
         pass # don't worry about crypto, do the rest of the script 
     
-    # TODO
-    # with open("./comparison_files/" + currency + ".txt", "w") as file: # save current rate for comparison in the next run
-    #     file.write(rate)
-    #     print(f'File with {currency} saved.') # status
+    # -- save current rate to file later - #
     
+    with open("./comparison_files/" + currency + ".txt", "a") as file: # save (append) current rate for comparison in future
+        file.write(str
+                   ((
+                       f'{timestamp}: {rate:.2f}\n'
+                       )
+                    ))
+        print(f'File with {currency.upper()} saved.') # status
+        
+    return rate # return value to the variable outside of the function 
+    
+# ----------- functions end ---------- #
+
 # ----- put your currencies here ----- #
 
 base_currency = 'pln'
@@ -217,7 +227,7 @@ def send_to_IFTTT(currency, rate, message):
     print("Alert sent to IFTTT.") # status
 
 # ----------- custom alerts ---------- #
-# TODO: function to avoid unnecessary code
+# TODO: function to avoid unnecessary code -> in progress on 7d0ee2f2
 
 # USD
 try:
@@ -284,9 +294,11 @@ else:
 # ------------- DOT yield ------------ #
 
 myDOTpricePL = 30.95 # got 220714, price from Revolut
+myDOT = 2.10497474
 
 try: 
-    get_currency5 = get_currency5 * get_currency2[0] # get PLN from EUR
+    get_currency5 = get_currency5 * get_currency2[0] # get DOT price in PLN by converting to PLN from EUR
+    myDOTvalue = myDOT * get_currency5 # calculate how much PLN I have in DOT
     
     # calculate
     DOTyield = get_currency5/myDOTpricePL
@@ -340,11 +352,6 @@ iconUp = 'https://i.postimg.cc/FK019QHq/arrow-up.png'
 iconConst = 'https://i.postimg.cc/xTkffSsR/minimize.png'
 iconDown = 'https://i.postimg.cc/JzVLRHHr/arrow-down.png'
 
-# TODO: can't write a function notificationMessage()
-# win10toast_click\__init__.py", line 140, in _show_toast
-    # title))
-# TypeError: Objects of type 'function' can not be converted to Unicode.
-
 # NOTE: notification syntax: currency_name: currency_value currency_symbol currency_previous_value
 # TODO: simplify notifications to a function, too much repetition
 
@@ -356,7 +363,7 @@ try:
                 f"{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n"
                 f"{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
                 f"{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
-                f"DOT: {get_currency5:.2f} zł ({DOTyield}%)\n"
+                f"DOT: {myDOTvalue:.2f} zł ({DOTyield}%)\n"
                 f"{currency4.upper()}: ${get_currency4:.0f} ({BTCyield}%)",
                 title='Forex update:', 
                 contentImage=iconUp, 
@@ -369,7 +376,7 @@ try:
                 f"{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n"
                 f"{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
                 f"{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
-                f"DOT: {get_currency5:.2f} zł ({DOTyield}%)\n"
+                f"DOT: {myDOTvalue:.2f} zł ({DOTyield}%)\n"
                 f"{currency4.upper()}: ${get_currency4:.0f} ({BTCyield}%)\n",
                 icon_path="./icons/v3/arrow-up.ico",
                 duration=None,
@@ -382,7 +389,7 @@ try:
                 f"{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n"
                 f"{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
                 f"{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
-                f"DOT: {get_currency5:.2f} zł ({DOTyield}%)\n"
+                f"DOT: {myDOTvalue:.2f} zł ({DOTyield}%)\n"
                 f"{currency4.upper()}: ${get_currency4:.0f} ({BTCyield}%)",
                 title='Forex update:',
                 contentImage=iconConst,
@@ -395,7 +402,7 @@ try:
                 f"{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n"
                 f"{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
                 f"{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
-                f"DOT: {get_currency5:.2f} zł ({DOTyield}%)\n"
+                f"DOT: {myDOTvalue:.2f} zł ({DOTyield}%)\n"
                 f"{currency4.upper()}: ${get_currency4:.0f} ({BTCyield}%)\n",
                 icon_path="./icons/v3/minimize.ico",
                 duration=None,
@@ -408,7 +415,7 @@ try:
                 f"{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n"
                 f"{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
                 f"{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
-                f"DOT: {get_currency5:.2f} zł ({DOTyield}%)\n"
+                f"DOT: {myDOTvalue:.2f} zł ({DOTyield}%)\n"
                 f"{currency4.upper()}: ${get_currency4:.0f} ({BTCyield}%)",
                 title='Forex update:',
                 contentImage=iconDown,
@@ -421,7 +428,7 @@ try:
                 f"{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n"
                 f"{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
                 f"{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
-                f"DOT: {get_currency5:.2f} zł ({DOTyield}%)\n"
+                f"DOT: {myDOTvalue:.2f} zł ({DOTyield}%)\n"
                 f"{currency4.upper()}: ${get_currency4:.0f} ({BTCyield}%)\n",
                 icon_path="./icons/v3/arrow-down.ico",
                 duration=None,
