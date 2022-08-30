@@ -8,7 +8,8 @@ __pycache__
 _old
 
 # API keys
-api
+api/*
+!api/.gitkeep
 
 # files for automations
 automate
@@ -19,5 +20,5 @@ icons/v2
 icons/v3
 
 # files used for comparison 
-comparison_files
 comparison_files/*
+!comparison_files/.gitkeep
