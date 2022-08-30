@@ -64,7 +64,7 @@ def getRates(currency, base_currency):
         previous_rate = float((re.search('[ ][0-9]+\.[0-9]+',previous_rate)[0]).lstrip()) # use regex to find rate in the file, remove whitespace, convert string to float
         # print(previous_rate) # debug
         print(f'Previous rate loaded.') # status
-    except (FileNotFoundError, ValueError): # file doesn't exist
+    except (FileNotFoundError, ValueError, IndexError): # file doesn't exist
         # NOTE: File doesn't exist, 1) first launch or 2) there was a problem with saving the value last time the script ran or 3) file is empty.
         # pass # let's move on 
         previous_rate = '' # let's move on
