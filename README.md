@@ -38,6 +38,7 @@ In both, use codes from [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217).
 
 ## Release History
 
+- 3.1: Added continuous rate recording — appending values to the files rather than replacing them on each run.
 - 3.0.0: Changed API to [Currency API by API PLANT](https://currency.getgeoapi.com) because the old API wasn't showing correct values (probably outdated/cached ones from several days prior); added more catchers for exceptions to prevent script from failing.
 
 <details>
