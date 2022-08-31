@@ -10,6 +10,8 @@ import sys # terminate script
 import requests # send data via webhook to IFTTT
 from inspect import cleandoc # clean up whitespace in multiline strings
 import re # regex
+import csv # save & read .csv files
+import os # create folders
 
 # notifications ↓ 
 from sys import platform # check platform (Windows/macOS)
@@ -31,6 +33,20 @@ print("Starting the script...") # status
 # ----- timestamp for saving data ---- #
 
 this_run_datetime = timestamp = datetime.strftime(datetime.now(), '%y%m%d-%H%M%S') # eg 210120-173112
+
+# ----- check and create folders ----- #
+# output
+if not os.path.isdir("api"):
+    os.mkdir("api")
+    print(f"Folder created: api")
+# comparison_files
+if not os.path.isdir("comparison_files"):
+    os.mkdir("comparison_files")
+    print(f"Folder created: comparison_files")
+# csv 
+if not os.path.isdir("comparison_files/csv"):
+    os.mkdir("comparison_files/csv")
+    print(f"Folder created: comparison_files/csv")
 
 # - get main API key and prepare URL - #
 
@@ -59,11 +75,10 @@ def getRates(currency, base_currency):
     # --------- get previous rate -------- #
     
     try:   
-        with open("./comparison_files/" + currency + ".txt", "r") as readFile: 
+        with open("./comparison_files/csv/" + currency + ".csv", "r", errors='ignore') as readFile: 
             previous_rate = readFile.readlines()[-1] # read last line of the file
-        previous_rate = float((re.search('[ ][0-9]+\.[0-9]+',previous_rate)[0]).lstrip()) # use regex to find rate in the file, remove whitespace, convert string to float
-        # print(previous_rate) # debug
-        print(f'Previous rate loaded.') # status
+        previous_rate = float((re.search('[0-9]+\.[0-9]+',previous_rate)[0])) # use regex to find rate in the file, remove whitespace, convert string to float
+        print(f'Previous {currency} rate loaded.') # status
     except (FileNotFoundError, ValueError, IndexError): # file doesn't exist
         # NOTE: File doesn't exist, 1) first launch or 2) there was a problem with saving the value last time the script ran or 3) file is empty.
         # pass # let's move on 
@@ -79,7 +94,7 @@ def getRates(currency, base_currency):
         # print(buildURL) # debug
         get_data = requests.get(url=buildURL).json() # get data from API
         # print(get_data)
-        rate = round(float(get_data['rates'][base_currency]['rate']),4) # take value from JSON returned from API and round to 4 decimals
+        rate = round(float(get_data['rates'][base_currency]['rate']),2) # take value from JSON returned from API and round to 4 decimals
         # print(rate) # debug
     
     # ----- catch if it doesn't work ----- #
@@ -142,13 +157,10 @@ def getRates(currency, base_currency):
 
     # -- save current rate to file later - #
     
-    with open("./comparison_files/" + currency + ".txt", "a") as file: # save (append) current rate for comparison in future
-        file.write(str
-                   ((
-                       f'{timestamp}: {rate:.2f}\n'
-                       ))
-                   )
-        print(f'File with {currency.upper()} saved.') # status
+    with open("./comparison_files/csv/" + currency + ".csv", "a", newline='') as file: # save (append) current rate for comparison in future
+        writer = csv.writer(file)
+        writer.writerow([timestamp,rate])
+        print(f'New {currency.upper()} rate saved in file.') # status
 
     # ----------- return values ---------- #
 
@@ -170,13 +182,10 @@ def getCryptoRates(currency):
     
     # -- save current rate to file later - #
     
-    with open("./comparison_files/" + currency + ".txt", "a") as file: # save (append) current rate for comparison in future
-        file.write(str
-                   ((
-                       f'{timestamp}: {rate:.2f}\n'
-                       )
-                    ))
-        print(f'File with {currency.upper()} saved.') # status
+    with open("./comparison_files/csv/" + currency + ".csv", "a", newline='') as file: # save (append) current rate for comparison in future
+        writer = csv.writer(file)
+        writer.writerow([timestamp,rate])
+        print(f'New {currency.upper()} rate saved in file.') # status
         
     return rate # return value to the variable outside of the function 
     
