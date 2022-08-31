@@ -311,6 +311,10 @@ try:
     get_currency5 = get_currency5 * get_currency2[0] # get DOT price in PLN by converting to PLN from EUR
     myDOTvalue = myDOT * get_currency5 # calculate how much PLN I have in DOT
     myDOTyield = round(myDOTvalue-(myDOTpricePL*myDOT),2) # calculate yield since I got DOT
+    if myDOTyield > 0:
+        myDOTyield = '+' + str(myDOTyield)
+    else: 
+        myDOTyield = '-' + str(myDOTyield)
     
     # calculate
     DOTyield = get_currency5/myDOTpricePL
