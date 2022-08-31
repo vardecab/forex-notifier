@@ -1,9 +1,9 @@
-alertEUR_buy = 4.65
-alertEUR_sell = 4.77
-alertUSD_buy = 4.50
-alertUSD_sell = 4.60
-alertGBP_buy = 5.50
-alertGBP_sell = 5.60
+alertEUR_buy = 4.70
+alertEUR_sell = 4.80
+alertUSD_buy = 4.62
+alertUSD_sell = 4.72
+alertGBP_buy = 5.52
+alertGBP_sell = 5.62
 alertBTC = 45000
 
 # ---------------- JOP --------------- #
