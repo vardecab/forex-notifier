@@ -38,6 +38,7 @@ In both, use codes from [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217).
 
 ## Release History
 
+- 3.4: Experimenting with auto updating repo.
 - 3.3.1: Added +/- signs to DOT yield notifications.
 - 3.3: Added DOT yield to notifications.
 - 3.2: Changed rate recording to `.csv` from `.txt`; added some checks to create folders if they're not present; improved texts in console.

@@ -157,7 +157,7 @@ def getRates(currency, base_currency):
 
     # -- save current rate to file later - #
     
-    with open("./comparison_files/csv/" + currency + ".csv", "a", newline='') as file: # save (append) current rate for comparison in future
+    with open("./comparison_files/csv/" + currency.upper() + ".csv", "a", newline='') as file: # save (append) current rate for comparison in future
         writer = csv.writer(file)
         writer.writerow([timestamp,rate])
         print(f'New {currency.upper()} rate saved in file.') # status
@@ -182,7 +182,7 @@ def getCryptoRates(currency):
     
     # -- save current rate to file later - #
     
-    with open("./comparison_files/csv/" + currency + ".csv", "a", newline='') as file: # save (append) current rate for comparison in future
+    with open("./comparison_files/csv/" + currency.upper() + ".csv", "a", newline='') as file: # save (append) current rate for comparison in future
         writer = csv.writer(file)
         writer.writerow([timestamp,rate])
         print(f'New {currency.upper()} rate saved in file.') # status

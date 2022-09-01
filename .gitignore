@@ -20,7 +20,7 @@ icons/v2
 icons/v3
 
 # files used for comparison 
-comparison_files/*
-!comparison_files/.gitkeep
-comparison_files/csv/*
-!comparison_files/csv/.gitkeep
+comparison_files/txt/*
+# !comparison_files/.gitkeep
+# !comparison_files/csv/*
+# !comparison_files/csv/.gitkeep
