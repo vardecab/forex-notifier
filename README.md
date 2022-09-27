@@ -1,5 +1,7 @@
 # forex-notifier
 
+![Actively Maintained](https://img.shields.io/badge/Maintenance%20Level-Actively%20Maintained-green.svg)
+
 ![](https://img.shields.io/badge/platform-Windows%20%7C%20macOS-blue)
 
 >Simple script to show forex rates as Windows 10/11 / macOS notification.
