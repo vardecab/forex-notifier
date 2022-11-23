@@ -40,6 +40,7 @@ In both, use codes from [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217).
 
 ## Release History
 
+- 3.6: Changed currency 3-letter codes to emoji flags in notifications.
 - 3.5: Added IFTTT alert for DOT.
 - 3.4.1: Fixed double `--` in notification when DOT yield is negative.
 - 3.4: Experimenting with auto updating repo.

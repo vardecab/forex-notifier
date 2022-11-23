@@ -387,9 +387,9 @@ try:
         if platform == "darwin": # macOS
             # NOTE: 2/2
             pync.notify(
-                f"{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n"
-                f"{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
-                f"{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
+                f"🇺🇸: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n"
+                f"🇪🇺: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
+                f"🇬🇧: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
                 f"DOT: {myDOTvalue:.2f} zł ({myDOTyield} zł; {DOTyield}%)\n"
                 f"{currency4.upper()}: ${get_currency4:.0f} ({BTCyield}%)",
                 title='Forex update:', 
@@ -400,9 +400,9 @@ try:
             toaster.show_toast(
                 title="Forex update:", 
                 msg=
-                f"{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n"
-                f"{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
-                f"{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
+                f"🇺🇸: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n"
+                f"🇪🇺: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
+                f"🇬🇧: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
                 f"DOT: {myDOTvalue:.2f} zł ({myDOTyield} zł; {DOTyield}%)\n"
                 f"{currency4.upper()}: ${get_currency4:.0f} ({BTCyield}%)\n",
                 icon_path="./icons/v3/arrow-up.ico",
@@ -413,9 +413,9 @@ try:
         if platform == "darwin": # macOS
             # NOTE: 2/2
             pync.notify(
-                f"{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n"
-                f"{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
-                f"{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
+                f"🇺🇸: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n"
+                f"🇪🇺: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
+                f"🇬🇧: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
                 f"DOT: {myDOTvalue:.2f} zł ({myDOTyield} zł; {DOTyield}%)\n"
                 f"{currency4.upper()}: ${get_currency4:.0f} ({BTCyield}%)",
                 title='Forex update:',
@@ -426,9 +426,9 @@ try:
             toaster.show_toast(
                 title="Forex update:", 
                 msg=
-                f"{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n"
-                f"{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
-                f"{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
+                f"🇺🇸: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n"
+                f"🇪🇺: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
+                f"🇬🇧: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
                 f"DOT: {myDOTvalue:.2f} zł ({myDOTyield} zł; {DOTyield}%)\n"
                 f"{currency4.upper()}: ${get_currency4:.0f} ({BTCyield}%)\n",
                 icon_path="./icons/v3/minimize.ico",
@@ -439,9 +439,9 @@ try:
         if platform == "darwin": # macOS
             # NOTE: 2/2
             pync.notify(
-                f"{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n"
-                f"{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
-                f"{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
+                f"🇺🇸: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n"
+                f"🇪🇺: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
+                f"🇬🇧: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
                 f"DOT: {myDOTvalue:.2f} zł ({myDOTyield} zł; {DOTyield}%)\n"
                 f"{currency4.upper()}: ${get_currency4:.0f} ({BTCyield}%)",
                 title='Forex update:',
@@ -452,9 +452,9 @@ try:
             toaster.show_toast(
                 title="Forex update:", 
                 msg=
-                f"{currency1.upper()}: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n"
-                f"{currency2.upper()}: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
-                f"{currency3.upper()}: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
+                f"🇺🇸: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n"
+                f"🇪🇺: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
+                f"🇬🇧: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
                 f"DOT: {myDOTvalue:.2f} zł ({myDOTyield} zł; {DOTyield}%)\n"
                 f"{currency4.upper()}: ${get_currency4:.0f} ({BTCyield}%)\n",
                 icon_path="./icons/v3/arrow-down.ico",
