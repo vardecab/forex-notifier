@@ -118,9 +118,9 @@ def getRates(currency, base_currency):
                 
         # show notification about the error
         if platform == "darwin": # macOS
-            pync.notify(f"Can't access API. Check your Internet connection and API Server Status.", title='forex-notifier', contentImage=error, sound="", open=apiURL)
+            pync.notify(f"Can't access API. Check your Internet connection and API Server Status by clicking here >>", title='forex-notifier', contentImage=error, sound="", open=apiURL)
         elif platform == "win32": # Windows
-            toaster.show_toast(title="forex-notifier", msg=f"Can't access API. Check your Internet connection and API Server Status.", icon_path="./icons/v3/error.ico", duration=None, threaded=True, callback_on_click=open_errorURL) # duration=None - leave notification in Notification Center; threaded=True - rest of the script will be allowed to be executed while the notification is still active
+            toaster.show_toast(title="forex-notifier", msg=f"Can't access API. Check your Internet connection and API Server Status by clicking here >>", icon_path="./icons/v3/error.ico", duration=None, threaded=True, callback_on_click=open_errorURL) # duration=None - leave notification in Notification Center; threaded=True - rest of the script will be allowed to be executed while the notification is still active
             
         print("Closing.")
         sys.exit() # close script
