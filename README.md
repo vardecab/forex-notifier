@@ -40,6 +40,7 @@ In both, use codes from [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217).
 
 ## Release History
 
+- 3.8: Disabled crypto; disabled alerts; reverted emojis to symbols on Windows because Windows doesn't support [country flag emojis](https://emojipedia.org/flags/#:~:text=except%20Windows%2C%C2%A0which%C2%A0displays%20two%2Dletter%20country%20codes%20instead%20of%20emoji%20flag%20images).
 - 3.7: Minor text change.
 - 3.6: Changed currency 3-letter codes to emoji flags in notifications.
 - 3.5: Added IFTTT alert for DOT.

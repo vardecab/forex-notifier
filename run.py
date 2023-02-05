@@ -199,7 +199,7 @@ currency1 = 'usd' # 1st currency
 currency2 = 'eur' # 2nd currency 
 currency3 = 'gbp' # ...
 currency4 = 'btcusdt' # 1st crypto; USDT should be 1:1 to USD
-currency5 = 'doteur' # 2nd crypto
+# currency5 = 'doteur' # 2nd crypto
 
 # ----- run function to get rates ---- #
 
@@ -207,7 +207,7 @@ get_currency1 = getRates(currency1, base_currency)
 get_currency2 = getRates(currency2, base_currency)
 get_currency3 = getRates(currency3, base_currency)
 get_currency4 = getCryptoRates(currency4) # BTC <> EUR
-get_currency5 = getCryptoRates(currency5) # DOT <> EUR
+# get_currency5 = getCryptoRates(currency5) # DOT <> EUR
 
 # ------------- BTC yield ------------ #
 
@@ -288,52 +288,52 @@ def send_to_IFTTT(currency, rate, message):
 # TODO: function to avoid unnecessary code -> in progress on 7d0ee2f2
 
 # USD
-try:
-    if get_currency1[0] <= float(alertThresholds.alertUSD_buy):
-        message = 'kup'
-        send_to_IFTTT(currency1, get_currency1[0], message)
-        print(f'{currency1.upper()}: {get_currency1[0]:.2f} // BUY!!!')
-    elif get_currency1[0] >= float(alertThresholds.alertUSD_sell):
-        message = 'sprzedaj'
-        send_to_IFTTT(currency1, get_currency1[0], message)
-        print(f'{currency1.upper()}: {get_currency1[0]:.2f} // SELL!!!')
-except: 
-    pass
+# try:
+#     if get_currency1[0] <= float(alertThresholds.alertUSD_buy):
+#         message = 'kup'
+#         send_to_IFTTT(currency1, get_currency1[0], message)
+#         print(f'{currency1.upper()}: {get_currency1[0]:.2f} // BUY!!!')
+#     elif get_currency1[0] >= float(alertThresholds.alertUSD_sell):
+#         message = 'sprzedaj'
+#         send_to_IFTTT(currency1, get_currency1[0], message)
+#         print(f'{currency1.upper()}: {get_currency1[0]:.2f} // SELL!!!')
+# except: 
+#     pass
 
-# EUR
-try:
-    if get_currency2[0] <= float(alertThresholds.alertEUR_buy):
-        message = 'kup'
-        send_to_IFTTT(currency2, get_currency2[0], message)
-        print(f'{currency2.upper()}: {get_currency2[0]:.2f} // BUY!!!')
-    elif get_currency2[0] >= float(alertThresholds.alertEUR_sell):
-        message = 'sprzedaj'
-        send_to_IFTTT(currency2, get_currency2[0], message)
-        print(f'{currency2.upper()}: {get_currency2[0]:.2f} // SELL!!!')
-except:
-    pass
+# # EUR
+# try:
+#     if get_currency2[0] <= float(alertThresholds.alertEUR_buy):
+#         message = 'kup'
+#         send_to_IFTTT(currency2, get_currency2[0], message)
+#         print(f'{currency2.upper()}: {get_currency2[0]:.2f} // BUY!!!')
+#     elif get_currency2[0] >= float(alertThresholds.alertEUR_sell):
+#         message = 'sprzedaj'
+#         send_to_IFTTT(currency2, get_currency2[0], message)
+#         print(f'{currency2.upper()}: {get_currency2[0]:.2f} // SELL!!!')
+# except:
+#     pass
 
-# GBP
-try:
-    if get_currency3[0] <= float(alertThresholds.alertGBP_buy):
-        message = 'kup'
-        send_to_IFTTT(currency3, get_currency3[0], message)
-        print(f'{currency3.upper()}: {get_currency3[0]:.2f} // BUY!!!')
-    elif get_currency3[0] >= float(alertThresholds.alertGBP_sell):
-        message = 'sprzedaj'
-        send_to_IFTTT(currency3, get_currency3[0], message)
-        print(f'{currency3.upper()}: {get_currency3[0]:.2f} // SELL!!!')
-except:
-    pass
+# # GBP
+# try:
+#     if get_currency3[0] <= float(alertThresholds.alertGBP_buy):
+#         message = 'kup'
+#         send_to_IFTTT(currency3, get_currency3[0], message)
+#         print(f'{currency3.upper()}: {get_currency3[0]:.2f} // BUY!!!')
+#     elif get_currency3[0] >= float(alertThresholds.alertGBP_sell):
+#         message = 'sprzedaj'
+#         send_to_IFTTT(currency3, get_currency3[0], message)
+#         print(f'{currency3.upper()}: {get_currency3[0]:.2f} // SELL!!!')
+# except:
+#     pass
 
 # DOT 
-try:
-    if myDOTvalue <= float(alertThresholds.alertDOT_sell):
-        message = 'sprzedaj'
-        send_to_IFTTT('DOT', myDOTvalue, message)
-        print(f'DOT: {myDOTvalue:.2f} // SELL!!!')
-except:
-    pass
+# try:
+#     if myDOTvalue <= float(alertThresholds.alertDOT_sell):
+#         message = 'sprzedaj'
+#         send_to_IFTTT('DOT', myDOTvalue, message)
+#         print(f'DOT: {myDOTvalue:.2f} // SELL!!!')
+# except:
+#     pass
     
 # BTC ≥ x.xx USD
 # NOTE: won't work after 3.0 update
@@ -389,9 +389,9 @@ try:
             pync.notify(
                 f"🇺🇸: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n"
                 f"🇪🇺: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
-                f"🇬🇧: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
-                f"DOT: {myDOTvalue:.2f} zł ({myDOTyield} zł; {DOTyield}%)\n"
-                f"{currency4.upper()}: ${get_currency4:.0f} ({BTCyield}%)",
+                f"🇬🇧: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n",
+                # f"DOT: {myDOTvalue:.2f} zł ({myDOTyield} zł; {DOTyield}%)\n"
+                # f"{currency4.upper()}: ${get_currency4:.0f} ({BTCyield}%)",
                 title='Forex update:', 
                 contentImage=iconUp, 
                 sound="",
@@ -400,11 +400,11 @@ try:
             toaster.show_toast(
                 title="Forex update:", 
                 msg=
-                f"🇺🇸: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n"
-                f"🇪🇺: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
-                f"🇬🇧: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
-                f"DOT: {myDOTvalue:.2f} zł ({myDOTyield} zł; {DOTyield}%)\n"
-                f"{currency4.upper()}: ${get_currency4:.0f} ({BTCyield}%)\n",
+                f"USD: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n"
+                f"EUR: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
+                f"GBP: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n",
+                # f"DOT: {myDOTvalue:.2f} zł ({myDOTyield} zł; {DOTyield}%)\n"
+                # f"{currency4.upper()}: ${get_currency4:.0f} ({BTCyield}%)\n",
                 icon_path="./icons/v3/arrow-up.ico",
                 duration=None,
                 threaded=True,
@@ -415,9 +415,9 @@ try:
             pync.notify(
                 f"🇺🇸: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n"
                 f"🇪🇺: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
-                f"🇬🇧: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
-                f"DOT: {myDOTvalue:.2f} zł ({myDOTyield} zł; {DOTyield}%)\n"
-                f"{currency4.upper()}: ${get_currency4:.0f} ({BTCyield}%)",
+                f"🇬🇧: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n",
+                # f"DOT: {myDOTvalue:.2f} zł ({myDOTyield} zł; {DOTyield}%)\n"
+                # f"{currency4.upper()}: ${get_currency4:.0f} ({BTCyield}%)",
                 title='Forex update:',
                 contentImage=iconConst,
                 sound="",
@@ -426,11 +426,11 @@ try:
             toaster.show_toast(
                 title="Forex update:", 
                 msg=
-                f"🇺🇸: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n"
-                f"🇪🇺: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
-                f"🇬🇧: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
-                f"DOT: {myDOTvalue:.2f} zł ({myDOTyield} zł; {DOTyield}%)\n"
-                f"{currency4.upper()}: ${get_currency4:.0f} ({BTCyield}%)\n",
+                f"USD: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n"
+                f"EUR: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
+                f"GBP: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n",
+                # f"DOT: {myDOTvalue:.2f} zł ({myDOTyield} zł; {DOTyield}%)\n"
+                # f"{currency4.upper()}: ${get_currency4:.0f} ({BTCyield}%)\n",
                 icon_path="./icons/v3/minimize.ico",
                 duration=None,
                 threaded=True,
@@ -441,9 +441,9 @@ try:
             pync.notify(
                 f"🇺🇸: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n"
                 f"🇪🇺: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
-                f"🇬🇧: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
-                f"DOT: {myDOTvalue:.2f} zł ({myDOTyield} zł; {DOTyield}%)\n"
-                f"{currency4.upper()}: ${get_currency4:.0f} ({BTCyield}%)",
+                f"🇬🇧: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n",
+                # f"DOT: {myDOTvalue:.2f} zł ({myDOTyield} zł; {DOTyield}%)\n"
+                # f"{currency4.upper()}: ${get_currency4:.0f} ({BTCyield}%)",
                 title='Forex update:',
                 contentImage=iconDown,
                 sound="",
@@ -452,11 +452,11 @@ try:
             toaster.show_toast(
                 title="Forex update:", 
                 msg=
-                f"🇺🇸: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n"
-                f"🇪🇺: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
-                f"🇬🇧: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n"
-                f"DOT: {myDOTvalue:.2f} zł ({myDOTyield} zł; {DOTyield}%)\n"
-                f"{currency4.upper()}: ${get_currency4:.0f} ({BTCyield}%)\n",
+                f"USD: {get_currency1[0]:.2f} {get_currency1[1]} ({get_currency1[2]:.2f})\n"
+                f"EUR: {get_currency2[0]:.2f} {get_currency2[1]} ({get_currency2[2]:.2f})\n"
+                f"GBP: {get_currency3[0]:.2f} {get_currency3[1]} ({get_currency3[2]:.2f})\n",
+                # f"DOT: {myDOTvalue:.2f} zł ({myDOTyield} zł; {DOTyield}%)\n"
+                # f"{currency4.upper()}: ${get_currency4:.0f} ({BTCyield}%)\n",
                 icon_path="./icons/v3/arrow-down.ico",
                 duration=None,
                 threaded=True,
