@@ -40,6 +40,7 @@ In both, use codes from [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217).
 
 ## Release History
 
+- 3.8.1: New library used for displaying Windows notifications.
 - 3.8: Disabled crypto; disabled alerts; reverted emojis to symbols on Windows because Windows doesn't support [country flag emojis](https://emojipedia.org/flags/#:~:text=except%20Windows%2C%C2%A0which%C2%A0displays%20two%2Dletter%20country%20codes%20instead%20of%20emoji%20flag%20images).
 - 3.7: Minor text change.
 - 3.6: Changed currency 3-letter codes to emoji flags in notifications.
@@ -118,7 +119,7 @@ Using [SemVer](http://semver.org/).
 - Icons from [Flaticon](https://www.flaticon.com)
 - [IFTTT](https://ifttt.com)
 ### Notifications
-- Windows: [win10toast-click](https://github.com/vardecab/win10toast-click)
+- Windows: [plyer](https://pypi.org/project/plyer/)
 - macOS: [pync](https://github.com/SeTeM/pync)
 
 ## Contributing
