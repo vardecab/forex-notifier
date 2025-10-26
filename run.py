@@ -25,6 +25,7 @@ import webbrowser  # open URLs from notification
 
 # import alert thresholds
 import alertThresholds  # import local file
+import json # to send webhook
 
 # --------- start + run time --------- #
 
@@ -282,62 +283,65 @@ try:
 except:  # possible server error
     pass
 
-# ---- IFTTT automation for alerts --- #
+# ---- Make automation for alerts ---- #
 
-try:
-    ifttt_maker_key = open('./api/IFTTT-key.txt', 'r').read()  # read API key
-except FileNotFoundError:
-    print("Couldn't find IFTTT API key — alerts won't work. Add file to the `api` folder / check file name (`IFTTT-key.txt`) and try again.")
-    pass
+def sendToMake(currency, rate, message):
 
-try:
-    event_name = 'forex'  # IFTTT event name which is used in recipes
-    # build URL
-    webhook_url = f'https://maker.ifttt.com/trigger/{event_name}/with/key/{ifttt_maker_key}'
-except:
-    pass
+    # https://eu2.make.com/535419/scenarios/1298138/edit # integration URL
+    MakeWebhookURL = "https://hook.eu2.make.com/xm6krljxp2zn89mlwfk82ajwqsiwjxv1" # URL from Make.com
 
-
-def send_to_IFTTT(currency, rate, message):
-
-    # data passed to IFTTT ↓
-    currency = currency.upper()  # nice and tidy
-    report = {
-        "value1": currency,
-        "value2": f'{rate:.2f}',
-        "value3": message  # additional message
+    headers = {
+        'Content-Type': 'application/json'
     }
-    requests.post(webhook_url, data=report)  # send data to IFTTT
-    print("Alert sent to IFTTT.")  # status
+    
+    currency = currency.upper() 
+    message = message.upper()
+    
+    data = {
+        'currency': currency,
+        'rate': f'{rate:.2f}',
+        'message': message # additional message
+    }
+    
+    response = requests.post(MakeWebhookURL, headers=headers, data=json.dumps(data)) # build a request and send it
+    
+    if response.status_code == 200:
+        print("Data sent successfully!")
+    else:
+        print(f"Failed to send data. Status code: {response.status_code}, Response: {response.text}")
 
 # ----------- custom alerts ---------- #
 # TODO: function to avoid unnecessary code -> in progress on 7d0ee2f2
 
 # USD
-# try:
-#     if get_currency1[0] <= float(alertThresholds.alertUSD_buy):
-#         message = 'kup'
-#         send_to_IFTTT(currency1, get_currency1[0], message)
-#         print(f'{currency1.upper()}: {get_currency1[0]:.2f} // BUY!!!')
-#     elif get_currency1[0] >= float(alertThresholds.alertUSD_sell):
-#         message = 'sprzedaj'
-#         send_to_IFTTT(currency1, get_currency1[0], message)
-#         print(f'{currency1.upper()}: {get_currency1[0]:.2f} // SELL!!!')
-# except:
-#     pass
+try:
+    if get_currency1[0] <= float(alertThresholds.alertUSD_buy):
+        message = 'kup'
+        # send_to_IFTTT(currency1, get_currency1[0], message)
+        sendToMake(currency1, get_currency1[0], message)
+        print(f'{currency1.upper()}: {get_currency1[0]:.2f} // BUY!!!')
+    elif get_currency1[0] >= float(alertThresholds.alertUSD_sell):
+        message = 'sprzedaj'
+        # send_to_IFTTT(currency1, get_currency1[0], message)
+        sendToMake(currency1, get_currency1[0], message)
+        print(f'{currency1.upper()}: {get_currency1[0]:.2f} // SELL!!!')
+except:
+    pass
 
 # # EUR
-# try:
-#     if get_currency2[0] <= float(alertThresholds.alertEUR_buy):
-#         message = 'kup'
-#         send_to_IFTTT(currency2, get_currency2[0], message)
-#         print(f'{currency2.upper()}: {get_currency2[0]:.2f} // BUY!!!')
-#     elif get_currency2[0] >= float(alertThresholds.alertEUR_sell):
-#         message = 'sprzedaj'
-#         send_to_IFTTT(currency2, get_currency2[0], message)
-#         print(f'{currency2.upper()}: {get_currency2[0]:.2f} // SELL!!!')
-# except:
-#     pass
+try:
+    if get_currency2[0] <= float(alertThresholds.alertEUR_buy):
+        message = 'kup'
+        # send_to_IFTTT(currency2, get_currency2[0], message)
+        sendToMake(currency2, get_currency2[0], message)
+        print(f'{currency2.upper()}: {get_currency2[0]:.2f} // BUY!!!')
+    elif get_currency2[0] >= float(alertThresholds.alertEUR_sell):
+        message = 'sprzedaj'
+        # send_to_IFTTT(currency2, get_currency2[0], message)
+        sendToMake(currency2, get_currency2[0], message)
+        print(f'{currency2.upper()}: {get_currency2[0]:.2f} // SELL!!!')
+except:
+    pass
 
 # # GBP
 # try:

@@ -32,14 +32,15 @@
 
 In both, use codes from [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217).
 
-- <s><i>(🚧 temporary) If you don't want to use IFTTT (it's free) then you need to remove all references to IFTTT in the code.</i></s> IFTTT is now optional as of v2.1.
+- Replace `MakeWebhookURL` with your own Make Webhook URL if you want to set up some automations.
 
 ### `alertThresholds.py` 
 
-- Modify this file with desired values to get alerts via IFTTT.
+- Modify this file with desired values to get alerts via Make.
 
 ## Release History
 
+- 3.9: Replaced IFTTT with Make.
 - 3.8.1: New library used for displaying Windows notifications.
 - 3.8: Disabled crypto; disabled alerts; reverted emojis to symbols on Windows because Windows doesn't support [country flag emojis](https://emojipedia.org/flags/#:~:text=except%20Windows%2C%C2%A0which%C2%A0displays%20two%2Dletter%20country%20codes%20instead%20of%20emoji%20flag%20images).
 - 3.7: Minor text change.
@@ -117,7 +118,7 @@ Using [SemVer](http://semver.org/).
 - [Currency API by API PLANT](https://currency.getgeoapi.com) 
 - [Binance API](https://binance-docs.github.io/apidocs/spot/en/)
 - Icons from [Flaticon](https://www.flaticon.com)
-- [IFTTT](https://ifttt.com)
+- [Make](https://www.make.com/en)
 ### Notifications
 - Windows: [plyer](https://pypi.org/project/plyer/)
 - macOS: [pync](https://github.com/SeTeM/pync)
